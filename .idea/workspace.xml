@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="08ad7fba-adb0-4ea5-b0e4-698b0adb2e08" name="Changes" comment="Initial commit for FER" />
+    <list default="true" id="08ad7fba-adb0-4ea5-b0e4-698b0adb2e08" name="Changes" comment="DIA 22/11/2023">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ExpressionParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ExpressionParser.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -26,9 +29,9 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2YXi5UvHGNBv8KO21hPZOYCKQC2" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -45,7 +48,6 @@
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "onboarding.tips.debug.path": "C:/Users/ferra/Desktop/MASTER/Software Architecture/SPREADSHEET_ARQSOFT/src/main/java/org/example/Main.java",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -57,7 +59,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1700678144264</updated>
-      <workItem from="1700678145335" duration="2182000" />
+      <workItem from="1700678145335" duration="2461000" />
+      <workItem from="1701094254429" duration="14635000" />
     </task>
     <task id="LOCAL-00001" summary="initial">
       <option name="closed" value="true" />
@@ -83,7 +86,15 @@
       <option name="project" value="LOCAL" />
       <updated>1700679828116</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="DIA 22/11/2023">
+      <option name="closed" value="true" />
+      <created>1700680579919</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1700680579919</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -104,6 +115,28 @@
     <MESSAGE value="initial" />
     <MESSAGE value="Initial Restauration" />
     <MESSAGE value="Initial commit for FER" />
-    <option name="LAST_COMMIT_MESSAGE" value="Initial commit for FER" />
+    <MESSAGE value="DIA 22/11/2023" />
+    <option name="LAST_COMMIT_MESSAGE" value="DIA 22/11/2023" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/ExpressionParser.java</url>
+          <line>91</line>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/ExpressionParser.java</url>
+          <line>88</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/ExpressionParser.java</url>
+          <line>24</line>
+          <option name="timeStamp" value="37" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

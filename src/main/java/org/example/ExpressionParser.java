@@ -1,4 +1,6 @@
 package org.example;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,20 +33,14 @@ public class ExpressionParser {
             char c = infixExpression.charAt(i);
 
             if (isOperand(c)) {
-                // Check for variables (e.g., A1) and replace with their values
-                StringBuilder variable = new StringBuilder();
-                while (i < infixExpression.length() && (Character.isLetterOrDigit(infixExpression.charAt(i)) || infixExpression.charAt(i) == '_')) {
-                    variable.append(infixExpression.charAt(i));
+                StringBuilder operand = new StringBuilder();
+                while (i < infixExpression.length() && (Character.isLetterOrDigit(infixExpression.charAt(i)) || infixExpression.charAt(i) == '.')) {
+                    operand.append(infixExpression.charAt(i));
                     i++;
                 }
-                i--; // Move back one position to handle the non-variable character in the next iteration
+                i--; // Move back one position to handle the non-operand character in the next iteration
 
-                if (isVariable(variable.toString())) {
-                    addDependencyToCurrentCell(variable.toString());
-                    output.append(getVariableValue(variable.toString())).append(" ");
-                } else {
-                    output.append(variable.toString()).append(" ");
-                }
+                output.append(operand.toString()).append(" ");
             } else if (isOperator(c)) {
                 handleOperator(c, operatorStack, output);
                 output.append(" "); // Add a space after each operator
@@ -67,25 +63,130 @@ public class ExpressionParser {
     public String preprocessFormula(String formula) {
         // Identify and replace basic operations in the formula
         String processedFormula = formula;
-
         // Define a pattern for identifying basic operations like SUMA(), PROMEDIO(), MIN(), and MAX()
         Pattern pattern = Pattern.compile("(SUMA|PROMEDIO|MIN|MAX)\\(([^)]+)\\)");
 
         Matcher matcher = pattern.matcher(formula);
         while (matcher.find()) {
             String operation = matcher.group(1);
-            String arguments = matcher.group(2);
-            FormulaCell formulaCell = new FormulaCell('='+operation +'('+arguments +')');
+            String arguments2=extractContentInOutermostParentheses(formula);
+            String innerContent = arguments2.substring(1, arguments2.length() - 1);
+            String[] elements2 = splitOutsideParentheses2(innerContent);
+            for (int i = 0; i < elements2.length; i++) {
+                String element = elements2[i];
+                if (element.contains("SUMA") || element.contains("PROMEDIO") || element.contains("MAX") || element.contains("MIN")) {
+                    FormulaCell formulaCell = new FormulaCell("="+ element);
+                    double result = formulaCell.evaluate(org.example.SpreadSheet.getCellMatrix());
+                    elements2[i]=String.valueOf(result);
+                }
+            }
+            String result3 = String.join(";", elements2);
+            FormulaCell formulaCell = new FormulaCell('='+operation +'('+result3+')');
             double result = formulaCell.evaluate(org.example.SpreadSheet.getCellMatrix());
             int result2 = (int) result;
 
             // Replace the matched part in the formula with the computed result as a string
-            processedFormula = processedFormula.replace(matcher.group(), String.valueOf(result2));
+            processedFormula = processedFormula.replace(operation+arguments2, String.valueOf(result2));
         }
 
         return processedFormula;
     }
 
+    public static String extractContentInOutermostParentheses(String expression) {
+        Stack<Integer> stack = new Stack<>();
+        StringBuilder result = new StringBuilder();
+        int outermostStart = -1; // Track the start index of the outermost parentheses
+
+        for (int i = 0; i < expression.length(); i++) {
+            char c = expression.charAt(i);
+
+            if (c == '(') {
+                if (stack.isEmpty()) {
+                    outermostStart = i;
+                }
+                stack.push(i);
+            } else if (c == ')') {
+                if (!stack.isEmpty()) {
+                    stack.pop();
+                    if (stack.isEmpty()) {
+                        String outermostContent = expression.substring(outermostStart, i + 1);
+                        result.append(handleContent(outermostContent));
+                        outermostStart = -1; // Reset for the next outermost set of parentheses
+                    }
+                }
+            }
+        }
+
+        return result.toString();
+    }
+
+    private static String handleContent(String content) {
+        if (containsSemicolon(content)) {
+            // Split content into parts based on semicolon
+            String[] parts = content.split(";");
+            StringBuilder result = new StringBuilder();
+
+            // Process each part
+            for (String part : parts) {
+                if (part.contains(":")) {
+                    // If the part contains a colon, treat it as a range and process accordingly
+                    result.append(handleRange(part)).append(";");
+                } else {
+                    // If no colon, append the part as is
+                    result.append(part).append(";");
+                }
+            }
+
+            // Remove the trailing semicolon and return the result
+            return result.deleteCharAt(result.length() - 1).toString();
+        } else {
+            // If no semicolon, return the content as is
+            return content;
+        }
+    }
+
+    private static String handleRange(String range) {
+        // Implement logic to handle range, e.g., convert "A1:A3" to "A1 A2 A3"
+        // For simplicity, this example just returns the original range
+        return range;
+    }
+
+    // Helper function to check if a string contains a semicolon
+    private static boolean containsSemicolon(String s) {
+        return s.contains(";");
+    }
+
+    private static String[] splitOutsideParentheses2(String input) {
+        // Initialize variables
+        int depth = 0;
+        int start = 0;
+        List<String> result = new ArrayList<>();
+
+        // Iterate through the characters of the input string
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+
+            // Check if the character is a semicolon outside of parentheses
+            if (c == ';' && depth == 0) {
+                // Add the substring from the last start index to the current index
+                result.add(input.substring(start, i));
+                // Update the start index for the next substring
+                start = i + 1;
+            } else if (c == '(') {
+                // Increase the depth when an opening parenthesis is encountered
+                depth++;
+            } else if (c == ')') {
+                // Decrease the depth when a closing parenthesis is encountered
+                depth = Math.max(0, depth - 1);
+            }
+        }
+
+        // Add the remaining substring after the last semicolon
+        result.add(input.substring(start));
+
+        // Convert the list to an array
+        return result.toArray(new String[0]);
+    }
 
     private void addDependencyToCurrentCell(String variable) {
         // Assuming you have a current cell in your context
@@ -119,7 +220,16 @@ public class ExpressionParser {
     }
 
     private boolean isOperand(char c) {
-        return Character.isLetterOrDigit(c);
+        return Character.isLetterOrDigit(c) || c == '.';
+    }
+
+    private static boolean isNumeric(String str) {
+        try {
+            Double.parseDouble(str.replace(",", ".")); // Replace comma with dot for decimal parsing
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     private int precedence(char operator) {
@@ -150,7 +260,7 @@ public class ExpressionParser {
     }
     static class TreeNode {
         char operator; // Change char to Object to accommodate both operators and operands
-        double operand; // Add an operand field
+        Double operand; // Add an operand field as Double to distinguish from operators
         TreeNode left, right;
 
         TreeNode(char operator) {
@@ -158,7 +268,7 @@ public class ExpressionParser {
             this.left = this.right = null;
         }
 
-        TreeNode(double operand) {
+        TreeNode(Double operand) {
             this.operand = operand;
             this.left = this.right = null;
         }
@@ -184,25 +294,18 @@ public class ExpressionParser {
         return evaluateSyntaxTree(stack.pop());
     }
 
-    private static boolean isNumeric(String str) {
-        try {
-            Double.parseDouble(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
     private static double evaluateSyntaxTree(TreeNode root) {
         if (root == null) {
             throw new IllegalArgumentException("Invalid syntax tree");
         }
-        if (root.operator == 0) { // Check if it's an operand
-            return root.operand;
-        } else {
+        if (root.operator != 0) { // Check if it's an operator
             double operand1 = evaluateSyntaxTree(root.left);
             double operand2 = evaluateSyntaxTree(root.right);
             return applyOperator(root.operator, operand1, operand2);
+        } else if (root.operand != null) { // Check if it's an operand
+            return root.operand;
+        } else {
+            throw new IllegalArgumentException("Invalid syntax tree node");
         }
     }
     private static boolean isOperator(char c) {
