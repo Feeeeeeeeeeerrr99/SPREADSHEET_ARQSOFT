@@ -1,25 +1,28 @@
 package org.example;
 
 public class NumberCell extends Cell{
-    private double number;
+    private double value;
+    private String Number;
 
-    public NumberCell(double Number) {
-        number = Number;
+    public NumberCell(double number) {
+        value = number;
+        Number=String.valueOf(number);
     }
-    public void setValue(double text) {this.number = text;}
+    public void setValue(double text) {this.value = text;}
     public double getContent() {
-        return number;
+        return value;
     }
     @Override
     public String getData() {
-        return String.valueOf(number);
+        return String.valueOf(value);
     }
     @Override
     protected void updateValue(String value) {
-        this.number = Double.parseDouble(value);
+        this.value = Double.parseDouble(value);
+        this.Number=value;
     }
     public double getValue() {
-        return number;
+        return value;
     }
     @Override
     public String getReference() {
@@ -28,6 +31,6 @@ public class NumberCell extends Cell{
     }
     @Override
     public void setNumericValue(Double result) {
-        this.number = result;
+        this.value = result;
     }
 }

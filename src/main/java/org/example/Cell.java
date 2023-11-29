@@ -9,9 +9,17 @@ public abstract class Cell {
     private Set<Cell> visited = new HashSet<>();
     private List<Cell> dependencies = new ArrayList<>();
     private Double numericValue;
-    private String originalValue;
+    private String StringValue;
     private static Cell currentCell;
 
+    private String formulaString;
+
+    public void setFormulaString(String formulaString) {
+        this.formulaString = formulaString;
+    }
+    public String getFormulaString() {
+        return formulaString;
+    }
 
 
     public static void setCurrentCell(Cell cell) {
@@ -23,9 +31,9 @@ public abstract class Cell {
     public abstract String getData();
 
     public void setValue(String value) throws Exception {
-        this.numericValue=Double.parseDouble (value);
+        this.numericValue=Double.parseDouble(value);
         visited.clear();
-        originalValue = value;
+        StringValue = value;
         updateValue(value);
         notifyDependents();
     }
@@ -51,8 +59,8 @@ public abstract class Cell {
     public Double getNumericValue() {
         return numericValue;
     }
-    public String getOriginalValue() {
-        return originalValue;
+    public String getStringValue() {
+        return StringValue;
     }
 
     public abstract String getReference();

@@ -101,14 +101,15 @@ public class Main {
                 }
                 if (formula.startsWith("=")) {
                     String formulaWithoutEquals = formula.substring(1);
+                    //SpreadSheet.setValueByCellReference(command,formula,formula, currentCell);
                     try {
                         double result = parser.evaluate(spreadSheet, formulaWithoutEquals);
-                        SpreadSheet.setValueByCellReference(command, String.valueOf(result), currentCell);
+                        SpreadSheet.setValueByCellReference(command, String.valueOf(result),formula, currentCell);
                     } catch (Exception e) {
                         System.out.println("Error: " + e.getMessage());
                     }
                 } else {
-                    SpreadSheet.setValueByCellReference(command, formula, currentCell);
+                    SpreadSheet.setValueByCellReference(command,formula,formula, currentCell);
                 }
             }
             spreadSheet.computeValues();

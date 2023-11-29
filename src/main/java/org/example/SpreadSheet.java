@@ -5,14 +5,7 @@ import com.opencsv.exceptions.CsvException;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 public class SpreadSheet {
     private static int rows;
@@ -59,10 +52,14 @@ public class SpreadSheet {
             return "Invalid Cell";
         }
     }
-    public static void setValueByCellReference(String cellReference, String cellValue, Cell currentCell) {
+    public static void setValueByCellReference(String cellReference, String cellValue,String formula, Cell currentCell) {
         int[] coordinates = convertCellReferenceToCoordinates(cellReference);
         data[coordinates[0]][coordinates[1]] = cellValue;
-        cellMatrix[coordinates[0]][coordinates[1]] = createCell(cellValue);
+        if (Objects.equals(formula, cellValue)) {
+            cellMatrix[coordinates[0]][coordinates[1]] = createCell(cellValue);
+        }else{
+            cellMatrix[coordinates[0]][coordinates[1]] = createCell(formula);
+        }
         if (currentCell != null) {
             Cell.setCurrentCell(currentCell);
         }
@@ -82,7 +79,7 @@ public class SpreadSheet {
                     return String.valueOf(cell.getNumericValue());
                 } else {
                     // If it's not a numeric value, return the original value
-                    return cell.getOriginalValue();
+                    return cell.getStringValue();
                 }
             }
         }

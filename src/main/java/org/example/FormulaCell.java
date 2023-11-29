@@ -4,17 +4,20 @@ import java.util.Set;
 
 public class FormulaCell extends Cell{
     private String formula;
-    private double number;
+    private Double value;
     private SpreadSheet ss;
+    private String Number;
 
 
     public FormulaCell(String formula) {
         this.formula = formula;
-        //this.number=Double.parseDouble(formula);
     }
-    public void setValue(String text) {this.formula = text;}
+    public void setValue(String text) {
+        this.value = Double.parseDouble(text);
+        this.Number = text;
+    }
     public String getContent() {return formula;}
-    public void setNumber(String formulavalue){this.number= Double.parseDouble(formulavalue);}
+    public void setNumber(String formulavalue){this.value= Double.parseDouble(formulavalue);}
 
     public double evaluate(Cell[][] cells) {
         if (formula.startsWith("=SUMA(") || formula.startsWith("=MIN(") || formula.startsWith("=MAX(") || formula.startsWith("=PROMEDIO(")) {
@@ -220,6 +223,7 @@ public class FormulaCell extends Cell{
         String formulaWithoutEquals = formula.substring(1);
         double result = parser.evaluate(this.ss, formulaWithoutEquals);
         setValue(String.valueOf(result));
+        setFormulaString(formula); // Set the formula string in the Cell
     }
 
     @Override
@@ -228,11 +232,11 @@ public class FormulaCell extends Cell{
         return formula;
     }
     public Double getNumericValue() {
-        return number;
+        return value;
     }
     @Override
     public void setNumericValue(Double result) {
-        this.number = result;
+        this.value = result;
     }
 
     private boolean isValidCell(int row, int col) {

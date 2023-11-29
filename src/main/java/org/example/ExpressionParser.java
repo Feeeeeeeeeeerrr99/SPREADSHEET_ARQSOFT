@@ -22,10 +22,10 @@ public class ExpressionParser {
     public double evaluate(SpreadSheet s, String expression) throws Exception {
         this.SpreadSheet = s;
         String preprocessedFormula = preprocessFormula(expression);
-        String rpn = infixToRPN(preprocessedFormula);
+        String rpn = infixToRPN(preprocessedFormula,s);
         return buildSyntaxTreeAndCompute(rpn);
     }
-    public String infixToRPN(String infixExpression) {
+    public String infixToRPN(String infixExpression, SpreadSheet spreadSheet) {
         StringBuilder output = new StringBuilder();
         Stack<Character> operatorStack = new Stack<>();
 
@@ -40,7 +40,17 @@ public class ExpressionParser {
                 }
                 i--; // Move back one position to handle the non-operand character in the next iteration
 
-                output.append(operand.toString()).append(" ");
+                // Check if the operand is a cell reference
+                String cellReference = operand.toString();
+                if (org.example.SpreadSheet.isValidCellReference(cellReference)) {
+                    // Replace cell reference with its actual value
+                    Cell cell = spreadSheet.getCellByReference(cellReference);
+                    Double cellContent= Double.valueOf(Double.toString(cell.getNumericValue()));
+                    output.append(cellContent).append(" ");
+                } else {
+                    // Not a cell reference, append as is
+                    output.append(operand.toString()).append(" ");
+                }
             } else if (isOperator(c)) {
                 handleOperator(c, operatorStack, output);
                 output.append(" "); // Add a space after each operator
@@ -59,6 +69,7 @@ public class ExpressionParser {
         // Trim any leading or trailing whitespace
         return output.toString().trim();
     }
+
 
     public String preprocessFormula(String formula) {
         // Identify and replace basic operations in the formula
