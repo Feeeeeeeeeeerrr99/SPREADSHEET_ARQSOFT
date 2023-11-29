@@ -52,13 +52,15 @@ public class SpreadSheet {
             return "Invalid Cell";
         }
     }
-    public static void setValueByCellReference(String cellReference, String cellValue,String formula, Cell currentCell) {
+    public static void setValueByCellReference(String cellReference, String cellValue,String formula, Cell currentCell) throws Exception {
         int[] coordinates = convertCellReferenceToCoordinates(cellReference);
         data[coordinates[0]][coordinates[1]] = cellValue;
         if (Objects.equals(formula, cellValue)) {
             cellMatrix[coordinates[0]][coordinates[1]] = createCell(cellValue);
+            cellMatrix[coordinates[0]][coordinates[1]].setValue(cellValue);
         }else{
             cellMatrix[coordinates[0]][coordinates[1]] = createCell(formula);
+            cellMatrix[coordinates[0]][coordinates[1]].setValue(cellValue);
         }
         if (currentCell != null) {
             Cell.setCurrentCell(currentCell);

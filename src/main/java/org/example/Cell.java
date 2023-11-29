@@ -31,11 +31,11 @@ public abstract class Cell {
     public abstract String getData();
 
     public void setValue(String value) throws Exception {
-        this.numericValue=Double.parseDouble(value);
-        visited.clear();
-        StringValue = value;
-        updateValue(value);
-        notifyDependents();
+            this.numericValue = Double.parseDouble(value);
+            visited.clear();
+            StringValue = value;
+            updateValue(value);
+            notifyDependents();
     }
 
     protected abstract void updateValue(String value) throws Exception;

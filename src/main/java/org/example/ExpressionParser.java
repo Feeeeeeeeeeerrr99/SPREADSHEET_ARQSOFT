@@ -44,8 +44,11 @@ public class ExpressionParser {
                 String cellReference = operand.toString();
                 if (org.example.SpreadSheet.isValidCellReference(cellReference)) {
                     // Replace cell reference with its actual value
-                    Cell cell = spreadSheet.getCellByReference(cellReference);
-                    Double cellContent= Double.valueOf(Double.toString(cell.getNumericValue()));
+                    Cell cell = org.example.SpreadSheet.getCellByReference(cellReference);
+
+                    assert cell != null;
+                    String cellContent= Double.toString(cell.getNumericValue());
+
                     output.append(cellContent).append(" ");
                 } else {
                     // Not a cell reference, append as is
