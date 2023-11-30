@@ -14,6 +14,7 @@ public class SpreadSheet {
     private static Cell[][] cellMatrix;
     private String currentCellname;
     private DependencyGraph dependencyGraph = new DependencyGraph();
+    private static DependencyManager dependencyManager;
 
 
     public SpreadSheet(int Rows, int Columns) {
@@ -23,13 +24,20 @@ public class SpreadSheet {
         cellMatrix = new Cell[rows][columns];
     }
 
+    public void setCellreference(String name,String formula) throws Exception {
+        int[] coordinates = convertCellReferenceToCoordinates(name);
+        cellMatrix[coordinates[0]][coordinates[1]] = createCell(formula);
+        cellMatrix[coordinates[0]][coordinates[1]].setValue("0");
+        cellMatrix[coordinates[0]][coordinates[1]].setCellName(name);
+    }
+
     static Cell getCellByReference(String cellReference) {
         if (isValidCellReference(cellReference)) {
             int row = cellReference.charAt(0) - 'A';
             int col = Integer.parseInt(cellReference.substring(1)) - 1;
 
             if (row >= 0 && row < rows && col >= 0 && col < columns) {
-                return cellMatrix[row][col];
+                return cellMatrix[col][row];
             } else {
                 System.out.println("Invalid cell reference: " + cellReference);
             }
@@ -58,13 +66,39 @@ public class SpreadSheet {
         if (Objects.equals(formula, cellValue)) {
             cellMatrix[coordinates[0]][coordinates[1]] = createCell(cellValue);
             cellMatrix[coordinates[0]][coordinates[1]].setValue(cellValue);
+            cellMatrix[coordinates[0]][coordinates[1]].setCellName(cellReference);
         }else{
             cellMatrix[coordinates[0]][coordinates[1]] = createCell(formula);
             cellMatrix[coordinates[0]][coordinates[1]].setValue(cellValue);
+            cellMatrix[coordinates[0]][coordinates[1]].setCellName(cellReference);
         }
         if (currentCell != null) {
             Cell.setCurrentCell(currentCell);
         }
+
+        // Register dependencies
+        Cell cell = cellMatrix[coordinates[0]][coordinates[1]];
+        if (cell instanceof FormulaCell) {
+            FormulaCell formulaCell = (FormulaCell) cell;
+            for (String dependentReference : formulaCell.getDependentReferences()) {
+                Cell dependentCell = dependencyManager.getCell(dependentReference);
+                if (dependentCell != null) {
+                    try {
+                        dependentCell.addDependent(cell);
+                    } catch (CircularDependencyException e) {
+                        // Handle circular dependency
+                        System.out.println("Circular Dependency Detected: " + e.getMessage());
+                        // Take appropriate action to resolve circular dependency
+                        // For example, break the loop, set a default value, etc.
+                        dependentCell.setVisited(false);
+                    }
+                }
+            }
+        }
+    }
+
+    public static void setDependencyManager(DependencyManager manager) {
+        dependencyManager = manager;
     }
 
     public String getValueByCellReference(String cellReference) {

@@ -7,18 +7,44 @@ import java.util.List;
 
 public abstract class Cell {
     private Set<Cell> visited = new HashSet<>();
+    private boolean visited1 = false;
     private List<Cell> dependencies = new ArrayList<>();
     private Double numericValue;
     private String StringValue;
     private static Cell currentCell;
-
+    private String actualCellname;
     private String formulaString;
+    private final List<Cell> dependents = new ArrayList<>();
+
 
     public void setFormulaString(String formulaString) {
         this.formulaString = formulaString;
     }
     public String getFormulaString() {
         return formulaString;
+    }
+    public void setCellName(String name){
+        this.actualCellname=name;
+    }
+    public void addDependent(Cell dependent) throws CircularDependencyException {
+        if (this.isDependent(dependent)) {
+            throw new CircularDependencyException("Circular dependency detected involving cell: " + this.getData());
+        }
+        dependents.add(dependent);
+    }
+    public List<Cell> getDependents() {
+        return dependents;
+    }
+    public boolean isDependent(Cell cell) {
+        if (dependents.contains(cell)) {
+            return true;
+        }
+        for (Cell dependent : dependents) {
+            if (dependent.isDependent(cell)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -41,10 +67,10 @@ public abstract class Cell {
     protected abstract void updateValue(String value) throws Exception;
 
     public void addDependency(Cell cell) throws Exception {
-        dependencies.add(cell);
+        dependents.add(cell);
     }
 
-    private void notifyDependents() throws Exception {
+    void notifyDependents() throws Exception {
         for (Cell dependent : dependencies) {
             if (!visited.contains(dependent)) {
                 visited.add(dependent);
@@ -65,4 +91,11 @@ public abstract class Cell {
 
     public abstract String getReference();
     public abstract void setNumericValue(Double result);
+
+    public void setVisited(boolean visited) {
+        this.visited1 = visited;
+    }
+    public boolean isVisited() {
+        return visited1;
+    }
 }

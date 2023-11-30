@@ -1,5 +1,5 @@
 package org.example;
-
+import java.util.HashSet;
 import java.util.Set;
 
 public class FormulaCell extends Cell{
@@ -7,10 +7,27 @@ public class FormulaCell extends Cell{
     private Double value;
     private SpreadSheet ss;
     private String Number;
+    private Set<String> dependentReferences = new HashSet<>();
+    private String actualCell;
 
 
     public FormulaCell(String formula) {
         this.formula = formula;
+    }
+    public FormulaCell(String formulavalue, String actualCell) {
+        formula = formulavalue;
+        this.actualCell = actualCell;
+    }
+
+    public String getActualCell() {
+        return actualCell;
+    }
+    public Set<String> getDependentReferences() {
+        return dependentReferences;
+    }
+
+    public void addDependentReference(String reference) {
+        dependentReferences.add(reference);
     }
     public void setValue(String text) {
         this.value = Double.parseDouble(text);
@@ -221,7 +238,7 @@ public class FormulaCell extends Cell{
         this.formula = formula;
         ExpressionParser parser = new ExpressionParser();
         String formulaWithoutEquals = formula.substring(1);
-        double result = parser.evaluate(this.ss, formulaWithoutEquals);
+        double result = parser.evaluate(this.ss, formulaWithoutEquals,getCurrentCell());
         setValue(String.valueOf(result));
         setFormulaString(formula); // Set the formula string in the Cell
     }

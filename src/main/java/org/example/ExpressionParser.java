@@ -1,4 +1,6 @@
 package org.example;
+import org.apache.xbean.recipe.CircularDependencyException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -10,6 +12,7 @@ public class ExpressionParser {
     private Stack<Double> values;
     private SpreadSheet SpreadSheet;
     private Cell currentCell;
+    private DependencyManager dependencyManager;
 
     public void setCurrentCell(Cell cell) {
         this.currentCell = cell;
@@ -18,12 +21,32 @@ public class ExpressionParser {
         this.operators = new Stack<>();
         this.values = new Stack<>();
     }
+    public ExpressionParser(SpreadSheet spreadSheet, DependencyManager dependencyManager,Cell current) {
+        this.SpreadSheet = spreadSheet;
+        this.dependencyManager = dependencyManager;
+        this.currentCell=current;
+    }
 
-    public double evaluate(SpreadSheet s, String expression) throws Exception {
+    public double evaluate(SpreadSheet s, String expression,Cell currentCell) throws Exception {
         this.SpreadSheet = s;
         String preprocessedFormula = preprocessFormula(expression);
         String rpn = infixToRPN(preprocessedFormula,s);
-        return buildSyntaxTreeAndCompute(rpn);
+        double result=buildSyntaxTreeAndCompute(rpn);
+        // Check for circular dependencies
+        if (currentCell.isVisited()) {
+            System.out.println("Circular dependency detected involving cell: " + currentCell.getData());
+            // Take appropriate action to resolve circular dependency
+            // For example, break the loop, set a default value, etc.
+            currentCell.setVisited(false);  // Reset the visited flag
+            return Double.NaN;  // Return some default value
+        }
+        // Update the current cell with the new value
+        currentCell.setVisited(true);
+        currentCell.updateValue(Double.toString(result));
+        currentCell.notifyDependents();
+        currentCell.setVisited(false); // Reset visited status
+
+        return result;
     }
     public String infixToRPN(String infixExpression, SpreadSheet spreadSheet) {
         StringBuilder output = new StringBuilder();

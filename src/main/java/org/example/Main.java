@@ -14,6 +14,7 @@ public class Main {
 
     private FileManager FM = new FileManager();
     SpreadSheet_Manager manager = new SpreadSheet_Manager();
+    DependencyManager dependencyManager = new DependencyManager();
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private boolean end = false;
     public void run() throws Exception {
@@ -86,6 +87,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             SpreadSheet spreadSheet = manager.getSpreadSheet(0);
+            SpreadSheet.setDependencyManager(dependencyManager);
             System.out.println("Enter cell reference(e.g., A1) or EXIT to close EDITOR):");
             String command = scanner.nextLine().toUpperCase();
             if (command.equals("EXIT")) {
@@ -94,16 +96,17 @@ public class Main {
             } else {
                 System.out.println("Enter formula (e.g., =3*SUM(A1:B2)):");
                 String formula = scanner.nextLine();
-                ExpressionParser parser = new ExpressionParser();
+                spreadSheet.setCellreference(command,formula);
                 Cell currentCell = SpreadSheet.getCellByReference(command);
-                if (currentCell != null) {
-                    parser.setCurrentCell(currentCell);
-                }
+                ExpressionParser parser = new ExpressionParser(spreadSheet, dependencyManager,currentCell);
                 if (formula.startsWith("=")) {
                     String formulaWithoutEquals = formula.substring(1);
                     //SpreadSheet.setValueByCellReference(command,formula,formula, currentCell);
                     try {
-                        double result = parser.evaluate(spreadSheet, formulaWithoutEquals);
+                        if (currentCell != null) {
+                            parser.setCurrentCell(currentCell);
+                        }
+                        double result = parser.evaluate(spreadSheet, formulaWithoutEquals,currentCell);
                         SpreadSheet.setValueByCellReference(command, String.valueOf(result),formula, currentCell);
                     } catch (Exception e) {
                         System.out.println("Error: " + e.getMessage());
