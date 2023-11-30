@@ -1,5 +1,4 @@
 package org.example;
-import org.apache.xbean.recipe.CircularDependencyException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,7 @@ public class ExpressionParser {
         double result=buildSyntaxTreeAndCompute(rpn);
         // Check for circular dependencies
         if (currentCell.isVisited()) {
-            System.out.println("Circular dependency detected involving cell: " + currentCell.getData());
+            System.out.println("Circular dependency detected involving cell: " + currentCell.getCellName());
             // Take appropriate action to resolve circular dependency
             // For example, break the loop, set a default value, etc.
             currentCell.setVisited(false);  // Reset the visited flag
@@ -45,10 +44,9 @@ public class ExpressionParser {
         currentCell.updateValue(Double.toString(result));
         currentCell.notifyDependents();
         currentCell.setVisited(false); // Reset visited status
-
         return result;
     }
-    public String infixToRPN(String infixExpression, SpreadSheet spreadSheet) {
+    public String infixToRPN(String infixExpression, SpreadSheet spreadSheet) throws CircularDependencyException {
         StringBuilder output = new StringBuilder();
         Stack<Character> operatorStack = new Stack<>();
 
@@ -68,6 +66,7 @@ public class ExpressionParser {
                 if (org.example.SpreadSheet.isValidCellReference(cellReference)) {
                     // Replace cell reference with its actual value
                     Cell cell = org.example.SpreadSheet.getCellByReference(cellReference);
+                    currentCell.addDependent(cell);
 
                     assert cell != null;
                     String cellContent= Double.toString(cell.getNumericValue());

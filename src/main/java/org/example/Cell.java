@@ -17,8 +17,8 @@ public abstract class Cell {
     private final List<Cell> dependents = new ArrayList<>();
 
 
-    public void setFormulaString(String formulaString) {
-        this.formulaString = formulaString;
+    public void setFormulaString(String formulaString1) {
+        this.formulaString = formulaString1;
     }
     public String getFormulaString() {
         return formulaString;
@@ -26,6 +26,8 @@ public abstract class Cell {
     public void setCellName(String name){
         this.actualCellname=name;
     }
+
+    public String getCellName(){return actualCellname;}
     public void addDependent(Cell dependent) throws CircularDependencyException {
         if (this.isDependent(dependent)) {
             throw new CircularDependencyException("Circular dependency detected involving cell: " + this.getData());

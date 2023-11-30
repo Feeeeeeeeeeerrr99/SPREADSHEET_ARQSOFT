@@ -36,6 +36,8 @@ public class FormulaCell extends Cell{
     public String getContent() {return formula;}
     public void setNumber(String formulavalue){this.value= Double.parseDouble(formulavalue);}
 
+    public String getFormulaString(){return this.formula;}
+
     public double evaluate(Cell[][] cells) {
         if (formula.startsWith("=SUMA(") || formula.startsWith("=MIN(") || formula.startsWith("=MAX(") || formula.startsWith("=PROMEDIO(")) {
             int startIndex = formula.indexOf("(") + 1;
@@ -235,12 +237,16 @@ public class FormulaCell extends Cell{
 
     @Override
     protected void updateValue(String formula) throws Exception {
-        this.formula = formula;
+        //this.formula = formula;
+        setValue(String.valueOf(formula));
+        /*
         ExpressionParser parser = new ExpressionParser();
         String formulaWithoutEquals = formula.substring(1);
         double result = parser.evaluate(this.ss, formulaWithoutEquals,getCurrentCell());
         setValue(String.valueOf(result));
         setFormulaString(formula); // Set the formula string in the Cell
+
+         */
     }
 
     @Override

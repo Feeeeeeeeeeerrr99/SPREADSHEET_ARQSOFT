@@ -15,7 +15,6 @@ public class DependencyGraph {
     public void addDependency(String dependentCell, String dependency) {
         dependencies.computeIfAbsent(dependentCell, k -> new HashSet<>()).add(dependency);
     }
-
     public Set<String> getDependencies(String cell) {
         return dependencies.getOrDefault(cell, new HashSet<>());
     }

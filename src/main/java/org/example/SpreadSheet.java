@@ -12,9 +12,11 @@ public class SpreadSheet {
     private static int columns;
     private static String[][] data;
     private static Cell[][] cellMatrix;
+
     private String currentCellname;
     private DependencyGraph dependencyGraph = new DependencyGraph();
     private static DependencyManager dependencyManager;
+
 
 
     public SpreadSheet(int Rows, int Columns) {
@@ -26,9 +28,15 @@ public class SpreadSheet {
 
     public void setCellreference(String name,String formula) throws Exception {
         int[] coordinates = convertCellReferenceToCoordinates(name);
-        cellMatrix[coordinates[0]][coordinates[1]] = createCell(formula);
-        cellMatrix[coordinates[0]][coordinates[1]].setValue("0");
-        cellMatrix[coordinates[0]][coordinates[1]].setCellName(name);
+        if (formula.startsWith("=")){
+            cellMatrix[coordinates[0]][coordinates[1]] = createCell(formula);
+            cellMatrix[coordinates[0]][coordinates[1]].setValue("0");
+            cellMatrix[coordinates[0]][coordinates[1]].setCellName(name);
+        }else{
+            cellMatrix[coordinates[0]][coordinates[1]] = createCell(formula);
+            cellMatrix[coordinates[0]][coordinates[1]].setValue(formula);
+            cellMatrix[coordinates[0]][coordinates[1]].setCellName(name);
+        }
     }
 
     static Cell getCellByReference(String cellReference) {
@@ -203,7 +211,6 @@ public class SpreadSheet {
     }
 
     public void printSpreadsheet() {
-        computeValues();
         // Print column headers (A, B, C, ...)
         System.out.print("\t"); // Create space for row numbers
         for (int col = 0; col < columns; col++) {
@@ -260,22 +267,44 @@ public class SpreadSheet {
     }
     private void computeCellValue(int row, int col) {
         Cell cell = cellMatrix[row][col];
-
         if (cell instanceof FormulaCell formulaCell) {
             try {
-                double result = formulaCell.evaluate(cellMatrix);
+                String formulita=formulaCell.getFormulaString();
+                double result=someMethod(this,cell,formulita);
                 cell.setNumericValue(result);
+                cell.setValue(Double.toString(result));
             } catch (Exception e) {
                 // Handle evaluation error
                 System.out.println("Error evaluating formula in cell " + convertToCellReference(row, col) + ": " + e.getMessage());
             }
         } else if (cell instanceof StringCell) {
             // String cells don't need computation
-            cell.setNumericValue(null);
+            cell.setNumericValue(cell.getNumericValue());
         } else if (cell instanceof NumberCell) {
             // Numeric cells don't need computation
-            cell.setNumericValue(((NumberCell) cell).getValue());
+            cell.setNumericValue(cell.getNumericValue());
         }
+    }
+
+    public void setDataFromCell(){
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
+                if (Objects.equals(cellMatrix[row][col], null)){
+                    data[row][col] = "null";
+                }else {
+                    data[row][col] = Double.toString(cellMatrix[row][col].getNumericValue());
+                }
+            }
+        }
+    }
+
+    public double someMethod(SpreadSheet currentSpreadSheet,Cell cell,String formula) throws Exception {
+        ExpressionParser parser = new ExpressionParser(currentSpreadSheet, dependencyManager,cell);
+        cell.setFormulaString(formula);
+        String formulaWithoutEquals = formula.substring(1);
+        parser.setCurrentCell(cell);
+        assert cell != null;
+        return parser.evaluate(currentSpreadSheet, formulaWithoutEquals,cell);
     }
 
     public void setValueSpreadSheet(int row, int column, String value, Cell currentCell) {
