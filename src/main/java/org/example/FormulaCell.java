@@ -237,18 +237,8 @@ public class FormulaCell extends Cell{
 
     @Override
     protected void updateValue(String formula) throws Exception {
-        //this.formula = formula;
         setValue(String.valueOf(formula));
-        /*
-        ExpressionParser parser = new ExpressionParser();
-        String formulaWithoutEquals = formula.substring(1);
-        double result = parser.evaluate(this.ss, formulaWithoutEquals,getCurrentCell());
-        setValue(String.valueOf(result));
-        setFormulaString(formula); // Set the formula string in the Cell
-
-         */
     }
-
     @Override
     public String getReference() {
         // For FormulaCell, you can return the actual formula as the reference
@@ -261,7 +251,6 @@ public class FormulaCell extends Cell{
     public void setNumericValue(Double result) {
         this.value = result;
     }
-
     private boolean isValidCell(int row, int col) {
         return true;
     }

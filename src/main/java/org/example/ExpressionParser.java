@@ -66,7 +66,7 @@ public class ExpressionParser {
                 if (org.example.SpreadSheet.isValidCellReference(cellReference)) {
                     // Replace cell reference with its actual value
                     Cell cell = org.example.SpreadSheet.getCellByReference(cellReference);
-                    currentCell.addDependent(cell);
+                    //currentCell.addDependent(cell);
 
                     assert cell != null;
                     String cellContent= Double.toString(cell.getNumericValue());
