@@ -292,7 +292,7 @@ public class SpreadSheet {
                 if (Objects.equals(cellMatrix[row][col], null)){
                     data[row][col] = "null";
                 }else {
-                    data[row][col] = Double.toString(cellMatrix[row][col].getNumericValue());
+                    data[row][col] = Double.toString(cellMatrix[row][col].getNumericValue())+"\t";
                 }
             }
         }

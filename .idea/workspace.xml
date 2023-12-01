@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="08ad7fba-adb0-4ea5-b0e4-698b0adb2e08" name="Changes" comment="Dependenicas basicas funcionan">
+    <list default="true" id="08ad7fba-adb0-4ea5-b0e4-698b0adb2e08" name="Changes" comment="Dependenicas basicas funcionan MEJOR ara queda que les formules funcionin be i mirar las circulars infinites">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ExpressionParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ExpressionParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/FormulaCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/FormulaCell.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/SpreadSheet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/SpreadSheet.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,7 +78,7 @@
       <workItem from="1701280519849" duration="15000000" />
       <workItem from="1701352666877" duration="30000" />
       <workItem from="1701356253594" duration="10681000" />
-      <workItem from="1701374012572" duration="2336000" />
+      <workItem from="1701374012572" duration="12778000" />
     </task>
     <task id="LOCAL-00001" summary="initial">
       <option name="closed" value="true" />
@@ -151,7 +152,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701369759216</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Dependenicas basicas funcionan MEJOR ara queda que les formules funcionin be i mirar las circulars infinites">
+      <option name="closed" value="true" />
+      <created>1701376387516</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1701376387516</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -178,25 +187,21 @@
     <MESSAGE value="Arreglat infixToRPN i variables dema toca revisar que tot es guardi be." />
     <MESSAGE value="Arreglat referencies i ja esta maquinaria per dependencies" />
     <MESSAGE value="Dependenicas basicas funcionan" />
-    <option name="LAST_COMMIT_MESSAGE" value="Dependenicas basicas funcionan" />
+    <MESSAGE value="Dependenicas basicas funcionan MEJOR ara queda que les formules funcionin be i mirar las circulars infinites" />
+    <option name="LAST_COMMIT_MESSAGE" value="Dependenicas basicas funcionan MEJOR ara queda que les formules funcionin be i mirar las circulars infinites" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/example/ExpressionParser.java</url>
-          <line>32</line>
-          <option name="timeStamp" value="3" />
+          <line>115</line>
+          <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/example/ExpressionParser.java</url>
-          <line>31</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/example/Main.java</url>
-          <line>107</line>
-          <option name="timeStamp" value="6" />
+          <line>174</line>
+          <option name="timeStamp" value="15" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

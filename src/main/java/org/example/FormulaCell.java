@@ -251,7 +251,4 @@ public class FormulaCell extends Cell{
     public void setNumericValue(Double result) {
         this.value = result;
     }
-    private boolean isValidCell(int row, int col) {
-        return true;
-    }
 }

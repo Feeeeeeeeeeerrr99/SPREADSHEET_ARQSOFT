@@ -30,7 +30,8 @@ public class ExpressionParser {
         this.SpreadSheet = s;
         String preprocessedFormula = preprocessFormula(expression);
         String rpn = infixToRPN(preprocessedFormula,s);
-        double result=buildSyntaxTreeAndCompute(rpn);
+        String rpncorrect = formatExpression(rpn);
+        double result=buildSyntaxTreeAndCompute(rpncorrect);
         // Check for circular dependencies
         if (currentCell.isVisited()) {
             System.out.println("Circular dependency detected involving cell: " + currentCell.getCellName());
@@ -66,11 +67,8 @@ public class ExpressionParser {
                 if (org.example.SpreadSheet.isValidCellReference(cellReference)) {
                     // Replace cell reference with its actual value
                     Cell cell = org.example.SpreadSheet.getCellByReference(cellReference);
-                    //currentCell.addDependent(cell);
-
                     assert cell != null;
-                    String cellContent= Double.toString(cell.getNumericValue());
-
+                    String cellContent = Double.toString(cell.getNumericValue());
                     output.append(cellContent).append(" ");
                 } else {
                     // Not a cell reference, append as is
@@ -78,7 +76,7 @@ public class ExpressionParser {
                 }
             } else if (isOperator(c)) {
                 handleOperator(c, operatorStack, output);
-                output.append(" "); // Add a space after each operator
+                output.append(" "); // Add space after operator
             } else if (c == '(') {
                 operatorStack.push(c);
             } else if (c == ')') {
@@ -95,6 +93,16 @@ public class ExpressionParser {
         return output.toString().trim();
     }
 
+    private void handleClosingParenthesis(Stack<Character> operatorStack, StringBuilder output) {
+        while (!operatorStack.isEmpty() && operatorStack.peek() != '(') {
+            output.append(operatorStack.pop()).append(" ");
+        }
+        if (!operatorStack.isEmpty()) {
+            operatorStack.pop(); // Pop the '('
+        }
+    }
+
+
 
     public String preprocessFormula(String formula) {
         // Identify and replace basic operations in the formula
@@ -105,15 +113,28 @@ public class ExpressionParser {
         Matcher matcher = pattern.matcher(formula);
         while (matcher.find()) {
             String operation = matcher.group(1);
-            String arguments2=extractContentInOutermostParentheses(formula);
+            String arguments2=extractContentInOutermostParentheses(processedFormula);
             String innerContent = arguments2.substring(1, arguments2.length() - 1);
             String[] elements2 = splitOutsideParentheses2(innerContent);
             for (int i = 0; i < elements2.length; i++) {
                 String element = elements2[i];
-                if (element.contains("SUMA") || element.contains("PROMEDIO") || element.contains("MAX") || element.contains("MIN")) {
-                    FormulaCell formulaCell = new FormulaCell("="+ element);
-                    double result = formulaCell.evaluate(org.example.SpreadSheet.getCellMatrix());
-                    elements2[i]=String.valueOf(result);
+
+                String pattern2 = "^[A-Za-z]+\\d+";
+                Pattern regex = Pattern.compile(pattern2);
+                Matcher matcher2 = regex.matcher(element);
+                if (matcher2.matches()) {
+                    if (org.example.SpreadSheet.isValidCellReference(element)) {
+                        // Replace cell reference with its actual value
+                        Cell cell = org.example.SpreadSheet.getCellByReference(element);
+                        assert cell != null;
+                        elements2[i] = Double.toString(cell.getNumericValue());
+                    }
+                } else {
+                    if (element.contains("SUMA") || element.contains("PROMEDIO") || element.contains("MAX") || element.contains("MIN")) {
+                        FormulaCell formulaCell = new FormulaCell("="+ element);
+                        double result = formulaCell.evaluate(org.example.SpreadSheet.getCellMatrix());
+                        elements2[i]=String.valueOf(result);
+                    }
                 }
             }
             String result3 = String.join(";", elements2);
@@ -127,9 +148,8 @@ public class ExpressionParser {
 
         return processedFormula;
     }
-
     public static String extractContentInOutermostParentheses(String expression) {
-        Stack<Integer> stack = new Stack<>();
+        int nestingLevel = 0;
         StringBuilder result = new StringBuilder();
         int outermostStart = -1; // Track the start index of the outermost parentheses
 
@@ -137,20 +157,29 @@ public class ExpressionParser {
             char c = expression.charAt(i);
 
             if (c == '(') {
-                if (stack.isEmpty()) {
+                if (nestingLevel == 0) {
                     outermostStart = i;
                 }
-                stack.push(i);
+                nestingLevel++;
             } else if (c == ')') {
-                if (!stack.isEmpty()) {
-                    stack.pop();
-                    if (stack.isEmpty()) {
-                        String outermostContent = expression.substring(outermostStart, i + 1);
-                        result.append(handleContent(outermostContent));
-                        outermostStart = -1; // Reset for the next outermost set of parentheses
-                    }
+                nestingLevel--;
+                if (nestingLevel == 1) { //ESTO ANTES ESTABA EN 0
+                    //nothing
+                } else if (nestingLevel < 0) {
+                    // Handle case where there is a second parenthesis without a corresponding opening parenthesis
+                    throw new IllegalArgumentException("Invalid parentheses in expression");
+                }else if (nestingLevel==0){
+                    String outermostContent = expression.substring(outermostStart, i + 1);
+                    result.append(handleContent(outermostContent));
+                    outermostStart = -1; // Reset for the next outermost set of parentheses
+                    break;
                 }
             }
+        }
+
+        if (nestingLevel > 0) {
+            // Handle case where there is a second opening parenthesis without a corresponding closing parenthesis
+            throw new IllegalArgumentException("Invalid parentheses in expression");
         }
 
         return result.toString();
@@ -288,12 +317,15 @@ public class ExpressionParser {
         operatorStack.push(operator);
     }
 
+    /*
     private void handleClosingParenthesis(Stack<Character> operatorStack, StringBuilder output) {
         while (!operatorStack.isEmpty() && operatorStack.peek() != '(') {
             output.append(operatorStack.pop());
         }
         operatorStack.pop();
     }
+
+     */
     static class TreeNode {
         char operator; // Change char to Object to accommodate both operators and operands
         Double operand; // Add an operand field as Double to distinguish from operators
@@ -364,5 +396,10 @@ public class ExpressionParser {
             default:
                 throw new IllegalArgumentException("Invalid operator: " + operator);
         }
+    }
+
+    public static String formatExpression(String input) {
+        // Insert space between operators and operands
+        return input.replaceAll("(?<=\\S)(?=[+\\-*/])|(?<=[+\\-*/])(?=\\S)", " ");
     }
 }

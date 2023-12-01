@@ -1,0 +1,23 @@
+COSES QUE POT FER CODI
+
+
+A NIVELL FORMULES
+=3*4+1*(8+9)				Operacions bàsiques completes
+=3*4+1*(8+9)*A1				Operacions bàsiques completes amb varaibles excel (A1)
+=SUMA/PROMEDIO/MIN/MAX(3;4;9)		SUMA... de valors individuals
+=SUMA/PROMEDIO/MIN/MAX(A1:B2)		SUMA... de rangs i valors tipo excel
+=SUMA/PROMEDIO/MIN/MAX(A1:B2;A2;6)	SUMA... de rangs i variables uniques alhora
+
+=SUMA(3;4;MIN(A1;A2;A3:A5;4))		Funcions anidades dins de funcions com a varaible + rangs
+=SUMA(1;2;3)+3*MAX(2;4;MIN(5;3))	Funciones anidadas con mas de una y todo valores
+=SUMA(A3;2;3)+3*MAX(2;4;MIN(5;3))	Funciones separadas con funciones dentro y valores tanto numericos como "A1"
+=SUMA(MIN(A1;A2);4;5)			Això funciona a nivell d dependencies (funcionen les bàsiques)
+=SUMA(2;3;4)+SUMA(A1:A2)		Funciona rangs amb mes duna formula separades
+
+
+COSES QUE NO POT FER CODI
+
+=SUMA(A1:A3;6;MAX(2;3))			NO LO PUEDE HACER PETA POR RANGOS (SI POT PERO AMB FORMULES SOLES NO AMB MES).
+=SUMA(3+4;3)				NO PUEDE HACER OPERACIONES DENTRO DE ARGUMENTOS
+
+
