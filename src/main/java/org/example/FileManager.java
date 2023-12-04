@@ -1,11 +1,13 @@
 package org.example;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import com.opencsv.exceptions.CsvValidationException;
 
 import java.io.*;
 import java.util.List;
 
 import java.io.IOException;
+import java.io.FileReader;
 
 
 public class FileManager {
@@ -22,7 +24,7 @@ public class FileManager {
         return spreadsheet;
     }
 
-    private static String[][] readCSV(String filePath) {
+    static String[][] readCSV(String filePath) {
         String[][] records = new String[0][0];
 
         try (CSVReader csvReader = new CSVReader(new FileReader(filePath))) {
@@ -45,7 +47,7 @@ public class FileManager {
                 for (int col = 0; col < columns; col++) {
                     Cell cell = spreadsheet.getCell(row, col);
                     if (cell != null) {
-                        String cellValue = cell.getData();
+                        String cellValue = Double.toString(cell.getNumericValue());
                         writer.write(cellValue + (col < columns - 1 ? "," : "\n"));
                     } else {
                         writer.write(col < columns - 1 ? "," : "\n");
@@ -55,5 +57,45 @@ public class FileManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean compareCSVFiles(String filePath1, String filePath2) throws IOException {
+        try (CSVReader reader1 = new CSVReader(new FileReader(filePath1));
+             CSVReader reader2 = new CSVReader(new FileReader(filePath2))) {
+
+            String[] line1, line2;
+
+            do {
+                line1 = reader1.readNext();
+                line2 = reader2.readNext();
+
+                if (!compareArrays(line1, line2)) {
+                    return false;
+                }
+
+            } while (line1 != null && line2 != null);
+
+            return line1 == null && line2 == null;
+        } catch (CsvValidationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static boolean compareArrays(String[] array1, String[] array2) {
+        if (array1 == null || array2 == null) {
+            return array1 == array2;
+        }
+
+        if (array1.length != array2.length) {
+            return false;
+        }
+
+        for (int i = 0; i < array1.length; i++) {
+            if (!array1[i].equals(array2[i])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -4,11 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="08ad7fba-adb0-4ea5-b0e4-698b0adb2e08" name="Changes" comment="Dependenicas basicas funcionan MEJOR ara queda que les formules funcionin be i mirar las circulars infinites">
+    <list default="true" id="08ad7fba-adb0-4ea5-b0e4-698b0adb2e08" name="Changes" comment="Coses molt arreglades faltan petits detalls">
+      <change afterPath="$PROJECT_DIR$/SpreadSheetTestResults_OK" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ExpressionParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ExpressionParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/FormulaCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/FormulaCell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/SpreadSheet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/SpreadSheet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/COSES QUE POT FER CODI.txt" beforeDir="false" afterPath="$PROJECT_DIR$/COSES QUE POT FER CODI.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Coses que fa el codi.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Coses que fa el codi.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/FileManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/FileManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +44,9 @@
         <option name="url" value="https://github.com/Feeeeeeeeeeerrr99/SPREADSHEET_ARQSOFT.git" />
       </UrlAndAccount>
     </option>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -78,7 +83,8 @@
       <workItem from="1701280519849" duration="15000000" />
       <workItem from="1701352666877" duration="30000" />
       <workItem from="1701356253594" duration="10681000" />
-      <workItem from="1701374012572" duration="12778000" />
+      <workItem from="1701374012572" duration="12903000" />
+      <workItem from="1701698754195" duration="7166000" />
     </task>
     <task id="LOCAL-00001" summary="initial">
       <option name="closed" value="true" />
@@ -160,7 +166,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701376387516</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Coses molt arreglades faltan petits detalls">
+      <option name="closed" value="true" />
+      <created>1701449850439</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1701449850439</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -188,7 +202,8 @@
     <MESSAGE value="Arreglat referencies i ja esta maquinaria per dependencies" />
     <MESSAGE value="Dependenicas basicas funcionan" />
     <MESSAGE value="Dependenicas basicas funcionan MEJOR ara queda que les formules funcionin be i mirar las circulars infinites" />
-    <option name="LAST_COMMIT_MESSAGE" value="Dependenicas basicas funcionan MEJOR ara queda que les formules funcionin be i mirar las circulars infinites" />
+    <MESSAGE value="Coses molt arreglades faltan petits detalls" />
+    <option name="LAST_COMMIT_MESSAGE" value="Coses molt arreglades faltan petits detalls" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
