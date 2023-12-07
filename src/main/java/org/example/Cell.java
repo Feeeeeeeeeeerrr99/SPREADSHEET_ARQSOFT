@@ -34,9 +34,6 @@ public abstract class Cell {
         }
         dependents.add(dependent);
     }
-    public List<Cell> getDependents() {
-        return dependents;
-    }
     public boolean isDependent(Cell cell) {
         if (dependents.contains(cell)) {
             return true;
@@ -90,7 +87,7 @@ public abstract class Cell {
     public String getStringValue() {
         return StringValue;
     }
-
+    public void setStringValue(String s){this.StringValue=s;}
     public abstract String getReference();
     public abstract void setNumericValue(Double result);
 

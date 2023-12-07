@@ -7,22 +7,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ExpressionParser {
-    private Stack<Operator> operators;
-    private Stack<Double> values;
     private SpreadSheet SpreadSheet;
     private Cell currentCell;
-    private DependencyManager dependencyManager;
+
 
     public void setCurrentCell(Cell cell) {
         this.currentCell = cell;
     }
-    public ExpressionParser() {
-        this.operators = new Stack<>();
-        this.values = new Stack<>();
-    }
-    public ExpressionParser(SpreadSheet spreadSheet, DependencyManager dependencyManager,Cell current) {
+    public ExpressionParser(SpreadSheet spreadSheet, Cell current) {
         this.SpreadSheet = spreadSheet;
-        this.dependencyManager = dependencyManager;
         this.currentCell=current;
     }
 
@@ -72,7 +65,7 @@ public class ExpressionParser {
                     output.append(cellContent).append(" ");
                 } else {
                     // Not a cell reference, append as is
-                    output.append(operand.toString()).append(" ");
+                    output.append(operand).append(" ");
                 }
             } else if (isOperator(c)) {
                 handleOperator(c, operatorStack, output);
@@ -317,15 +310,6 @@ public class ExpressionParser {
         operatorStack.push(operator);
     }
 
-    /*
-    private void handleClosingParenthesis(Stack<Character> operatorStack, StringBuilder output) {
-        while (!operatorStack.isEmpty() && operatorStack.peek() != '(') {
-            output.append(operatorStack.pop());
-        }
-        operatorStack.pop();
-    }
-
-     */
     static class TreeNode {
         char operator; // Change char to Object to accommodate both operators and operands
         Double operand; // Add an operand field as Double to distinguish from operators

@@ -1,10 +1,4 @@
 package org.example;
-
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
-
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 
 public class SpreadSheet {
@@ -12,8 +6,6 @@ public class SpreadSheet {
     private static int columns;
     private static String[][] data;
     private static Cell[][] cellMatrix;
-
-    private String currentCellname;
     private DependencyGraph dependencyGraph = new DependencyGraph();
     private static DependencyManager dependencyManager;
 
@@ -32,8 +24,12 @@ public class SpreadSheet {
             cellMatrix[coordinates[0]][coordinates[1]] = createCell(formula);
             cellMatrix[coordinates[0]][coordinates[1]].setValue("0");
             cellMatrix[coordinates[0]][coordinates[1]].setCellName(name);
-        }else{
+        }else if (isNumeric(formula)){
             cellMatrix[coordinates[0]][coordinates[1]] = createCell(formula);
+            cellMatrix[coordinates[0]][coordinates[1]].setValue(formula);
+            cellMatrix[coordinates[0]][coordinates[1]].setCellName(name);
+        }else {
+            cellMatrix[coordinates[0]][coordinates[1]] = new StringCell(formula);
             cellMatrix[coordinates[0]][coordinates[1]].setValue(formula);
             cellMatrix[coordinates[0]][coordinates[1]].setCellName(name);
         }
@@ -71,11 +67,19 @@ public class SpreadSheet {
     public static void setValueByCellReference(String cellReference, String cellValue,String formula, Cell currentCell) throws Exception {
         int[] coordinates = convertCellReferenceToCoordinates(cellReference);
         data[coordinates[0]][coordinates[1]] = cellValue;
-        if (Objects.equals(formula, cellValue)) {
+
+        if (formula.startsWith("=")) {
             cellMatrix[coordinates[0]][coordinates[1]] = createCell(cellValue);
             cellMatrix[coordinates[0]][coordinates[1]].setValue(cellValue);
             cellMatrix[coordinates[0]][coordinates[1]].setCellName(cellReference);
-        }else{
+
+        }else if(!formula.startsWith("=")){
+            cellMatrix[coordinates[0]][coordinates[1]] = new StringCell(cellValue);
+            cellMatrix[coordinates[0]][coordinates[1]].setValue(cellValue);
+            cellMatrix[coordinates[0]][coordinates[1]].setCellName(cellReference);
+            cellMatrix[coordinates[0]][coordinates[1]].setStringValue(formula);
+        }
+        else{
             cellMatrix[coordinates[0]][coordinates[1]] = createCell(formula);
             cellMatrix[coordinates[0]][coordinates[1]].setValue(cellValue);
             cellMatrix[coordinates[0]][coordinates[1]].setCellName(cellReference);
@@ -86,8 +90,7 @@ public class SpreadSheet {
 
         // Register dependencies
         Cell cell = cellMatrix[coordinates[0]][coordinates[1]];
-        if (cell instanceof FormulaCell) {
-            FormulaCell formulaCell = (FormulaCell) cell;
+        if (cell instanceof FormulaCell formulaCell) {
             for (String dependentReference : formulaCell.getDependentReferences()) {
                 Cell dependentCell = dependencyManager.getCell(dependentReference);
                 if (dependentCell != null) {
@@ -142,31 +145,6 @@ public class SpreadSheet {
         int row = Integer.parseInt(cellReference.replaceAll("[A-Z]", "")) - 1; // Adjust for 0-based indexing
 
         return new int[]{row, col - 1}; // Adjust for 0-based indexing
-    }
-    public String getValueSpreadSheet(int row, int column) {
-        return data[row][column];
-    }
-    public <T> T getCellValueOfSpreadSheet(int row, int column, Class<T> returnType) {
-        String cellValue = data[row][column];
-        if (returnType == String.class) {
-            // If the caller expects a String, return the string value
-            return returnType.cast(cellValue);
-        } else if (returnType == Double.class) {
-            // If the caller expects a Double, transform the string value to Double
-            try {
-                return returnType.cast(Double.parseDouble(cellValue));
-            } catch (NumberFormatException e) {
-                // Handle the case where the value is not a valid Double
-                return null;
-            }
-        } else {
-            // Handle other types if needed
-            return null;
-        }
-    }
-    public void setValueSpreadSheet(int row, int column, String value) {
-        data[row][column] = value;
-        cellMatrix[row][column] = createCell(value);
     }
     public int getRows(){return rows;}
     public int getColumns(){return columns;}
@@ -223,7 +201,7 @@ public class SpreadSheet {
         for (int row = 0; row < rows; row++) {
             System.out.print((row + 1) + "\t"); // Row number
             for (int col = 0; col < columns; col++) {
-                System.out.print(data[row][col] + "\t"); // Data value
+                System.out.print(data[row][col]+ "\t"); // Data value
             }
             System.out.println(); // Move to the next line
         }
@@ -251,11 +229,6 @@ public class SpreadSheet {
     }
     public void setData(String[][] csvData) {
         this.data = csvData;
-    }
-
-    public Cell getCurrentCell(String cn) {
-        this.currentCellname=cn;
-        return getCellByReference(currentCellname);
     }
 
     public void computeValues() {
@@ -292,14 +265,14 @@ public class SpreadSheet {
                 if (Objects.equals(cellMatrix[row][col], null)){
                     data[row][col] = "null";
                 }else {
-                    data[row][col] = Double.toString(cellMatrix[row][col].getNumericValue())+"\t";
+                    data[row][col] = cellMatrix[row][col].getStringValue() +"\t";
                 }
             }
         }
     }
 
     public double someMethod(SpreadSheet currentSpreadSheet,Cell cell,String formula) throws Exception {
-        ExpressionParser parser = new ExpressionParser(currentSpreadSheet, dependencyManager,cell);
+        ExpressionParser parser = new ExpressionParser(currentSpreadSheet, cell);
         cell.setFormulaString(formula);
         String formulaWithoutEquals = formula.substring(1);
         parser.setCurrentCell(cell);

@@ -2,18 +2,7 @@ package org.example;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Scanner;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
-
-import javax.swing.text.Position;
-import java.io.*;
-import java.util.List;
-
 import static org.example.FileManager.readCSV;
-
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -39,14 +28,14 @@ public class Main {
 
     public void menu() throws Exception {
         System.out.println("SPREADSHEET UI");
-        System.out.println("----");
+        System.out.println("------------------");
         System.out.println("1. Load existing SpreadSheet");
         System.out.println("2. Create new SpreadSheet");
-        System.out.println("3. Save the existing SpreadSheet");
+        System.out.println("3. Save the actual SpreadSheet");
         System.out.println("------------------------------------");
         System.out.println("4. Edit SpreadSheet");
         System.out.println("5. Print existing SpreadSheet");
-        System.out.println("9. TEST: Perform a pre-stablished test");
+        System.out.println("9. TEST: Perform a pre-established formula test");
         System.out.println("0. Exit");
         String str = "";
         try {
@@ -81,17 +70,16 @@ public class Main {
     }
 
     public void loadSpreadSheet() {
-        SpreadSheet ls = FileManager.createSpreadsheet("extraccion");
+        SpreadSheet ls = FileManager.createSpreadsheet("TemplateSpreadSheet");
         manager.addSpreadSheet(ls);
-        // Print the spreadsheet
         ls.printSpreadsheet();
     }
 
     public void createSpreadSheet() {
         System.out.println("Provide the rows of the new SpreadSheet");
-        String numberofrows = "";
+        String numberofRows = "";
         try {
-            numberofrows = reader.readLine();
+            numberofRows = reader.readLine();
         } catch (Exception e) {
             System.out.println("Error reading line");
         }
@@ -102,15 +90,14 @@ public class Main {
         } catch (Exception e) {
             System.out.println("Error reading line");
         }
-        SpreadSheet spreadsheet = new SpreadSheet(Integer.parseInt(numberofrows), Integer.parseInt(numberofcolumns));
+        SpreadSheet spreadsheet = new SpreadSheet(Integer.parseInt(numberofRows), Integer.parseInt(numberofcolumns));
         manager.addSpreadSheet(spreadsheet);
-        // Print the spreadsheet
         spreadsheet.printSpreadsheet();
     }
 
     public void SaveSpreadSheet() {
         SpreadSheet retrievedSpreadsheet = manager.getSpreadSheet(0);
-        FM.exportToCSV(retrievedSpreadsheet, "extraccion");
+        FM.exportToCSV(retrievedSpreadsheet, "TemplateSpreadSheet");
     }
 
     public void EditSpreadSheet() throws Exception {
@@ -122,7 +109,7 @@ public class Main {
             String command = scanner.nextLine().toUpperCase();
             Cell currentCell;
             if (command.equals("EXIT")) {
-                // Exit the program
+                // Exit the editor
                 break;
             } else {
                 System.out.println("Enter formula (e.g., =3*SUM(A1:B2)):");
@@ -130,7 +117,7 @@ public class Main {
                 spreadSheet.setCellreference(command, formula);
                 currentCell = SpreadSheet.getCellByReference(command);
                 if (formula.startsWith("=")) {
-                    ExpressionParser parser = new ExpressionParser(spreadSheet, dependencyManager, currentCell);
+                    ExpressionParser parser = new ExpressionParser(spreadSheet, currentCell);
                     String formulaWithoutEquals = formula.substring(1);
                     try {
                         if (currentCell != null) {
@@ -164,10 +151,10 @@ public class Main {
         spreadSheet.setCellreference("B2", "4");
         //Anem a probar formules
         for (int i = 0; i < commands.length; i++) {
-            String[] postions = {"C1", "C2", "C3", "C4", "C5", "D1", "D2", "D3", "D4", "D5"};
-            spreadSheet.setCellreference(postions[i], "=" + commands[i][0]);
-            Cell currentCell = org.example.SpreadSheet.getCellByReference(postions[i]);
-            ExpressionParser parser = new ExpressionParser(spreadSheet, dependencyManager, currentCell);
+            String[] positions = {"C1", "C2", "C3", "C4", "C5", "D1", "D2", "D3", "D4", "D5"};
+            spreadSheet.setCellreference(positions[i], "=" + commands[i][0]);
+            Cell currentCell = org.example.SpreadSheet.getCellByReference(positions[i]);
+            ExpressionParser parser = new ExpressionParser(spreadSheet, currentCell);
             String formulaWithoutEquals = commands[i][0];
             try {
                 if (currentCell != null) {
@@ -175,7 +162,7 @@ public class Main {
                 }
                 assert currentCell != null;
                 double result = parser.evaluate(spreadSheet, formulaWithoutEquals, currentCell);
-                org.example.SpreadSheet.setValueByCellReference(postions[i], String.valueOf(result), "=" + formulaWithoutEquals, currentCell);
+                org.example.SpreadSheet.setValueByCellReference(positions[i], String.valueOf(result), "=" + formulaWithoutEquals, currentCell);
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }

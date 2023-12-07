@@ -2,13 +2,10 @@ package org.example;
 
 public class StringCell extends Cell{
     private String Textvalue;
-    private Double value;
-    public StringCell(String text) {Textvalue = text;
-        this.value = Double.parseDouble(text);}
+    public StringCell(String text) {Textvalue = text;}
     public void setValue(String text) {
         this.Textvalue = text;
     }
-    public String getContent() {return Textvalue;}
 
     @Override
     public String getData() {
@@ -18,7 +15,6 @@ public class StringCell extends Cell{
     @Override
     protected void updateValue(String Value) {
         this.Textvalue = Value;
-        value = Double.parseDouble(Value);
     }
     @Override
     public String getReference() {

@@ -13,7 +13,6 @@ import java.io.FileReader;
 public class FileManager {
     public static SpreadSheet createSpreadsheet(String filePath) {
         String[][] csvData = readCSV(filePath);
-
         if (csvData.length == 0 || csvData[0].length == 0) {
             throw new IllegalArgumentException("CSV file is empty");
         }
@@ -38,8 +37,7 @@ public class FileManager {
         return records;
     }
     public void exportToCSV(SpreadSheet spreadsheet, String fileName) {
-        String filePath = fileName;
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             int rows = spreadsheet.getRows();
             int columns = spreadsheet.getColumns();
 
@@ -85,17 +83,14 @@ public class FileManager {
         if (array1 == null || array2 == null) {
             return array1 == array2;
         }
-
         if (array1.length != array2.length) {
             return false;
         }
-
         for (int i = 0; i < array1.length; i++) {
             if (!array1[i].equals(array2[i])) {
                 return false;
             }
         }
-
         return true;
     }
 }

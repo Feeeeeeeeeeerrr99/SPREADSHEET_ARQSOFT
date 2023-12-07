@@ -5,8 +5,6 @@ import java.util.Set;
 public class FormulaCell extends Cell{
     private String formula;
     private Double value;
-    private SpreadSheet ss;
-    private String Number;
     private Set<String> dependentReferences = new HashSet<>();
     private String actualCell;
 
@@ -19,22 +17,15 @@ public class FormulaCell extends Cell{
         this.actualCell = actualCell;
     }
 
-    public String getActualCell() {
-        return actualCell;
-    }
     public Set<String> getDependentReferences() {
         return dependentReferences;
     }
 
-    public void addDependentReference(String reference) {
-        dependentReferences.add(reference);
-    }
     public void setValue(String text) {
         this.value = Double.parseDouble(text);
-        this.Number = text;
     }
-    public String getContent() {return formula;}
-    public void setNumber(String formulavalue){this.value= Double.parseDouble(formulavalue);}
+
+
 
     public String getFormulaString(){return this.formula;}
 
