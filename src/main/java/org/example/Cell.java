@@ -28,12 +28,14 @@ public abstract class Cell {
     }
 
     public String getCellName(){return actualCellname;}
-    public void addDependent(Cell dependent) throws CircularDependencyException {
+    public boolean addDependent(Cell dependent) {
         if (this.isDependent(dependent)) {
-            throw new CircularDependencyException("Circular dependency detected involving cell: " + this.getData());
+            return false;
         }
         dependents.add(dependent);
+        return false;
     }
+
     public boolean isDependent(Cell cell) {
         if (dependents.contains(cell)) {
             return true;

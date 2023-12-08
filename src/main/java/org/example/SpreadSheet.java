@@ -6,7 +6,6 @@ public class SpreadSheet {
     private static int columns;
     private static String[][] data;
     private static Cell[][] cellMatrix;
-    private DependencyGraph dependencyGraph = new DependencyGraph();
     private static DependencyManager dependencyManager;
 
 
@@ -64,74 +63,55 @@ public class SpreadSheet {
             return "Invalid Cell";
         }
     }
-    public static void setValueByCellReference(String cellReference, String cellValue,String formula, Cell currentCell) throws Exception {
-        int[] coordinates = convertCellReferenceToCoordinates(cellReference);
-        data[coordinates[0]][coordinates[1]] = cellValue;
+    public static void setValueByCellReference(String cellReference, String cellValue, String formula, Cell currentCell) {
+        try {
+            int[] coordinates = convertCellReferenceToCoordinates(cellReference);
+            data[coordinates[0]][coordinates[1]] = cellValue;
 
-        if (formula.startsWith("=")) {
-            cellMatrix[coordinates[0]][coordinates[1]] = createCell(cellValue);
-            cellMatrix[coordinates[0]][coordinates[1]].setValue(cellValue);
-            cellMatrix[coordinates[0]][coordinates[1]].setCellName(cellReference);
+            if (formula.startsWith("=")) {
+                cellMatrix[coordinates[0]][coordinates[1]] = createCell(formula);
+                cellMatrix[coordinates[0]][coordinates[1]].setValue(cellValue);
+                cellMatrix[coordinates[0]][coordinates[1]].setCellName(cellReference);
+            } else if (!formula.startsWith("=") && !isNumeric(formula)) {
+                cellMatrix[coordinates[0]][coordinates[1]] = new StringCell(cellValue);
+                cellMatrix[coordinates[0]][coordinates[1]].setValue(cellValue);
+                cellMatrix[coordinates[0]][coordinates[1]].setCellName(cellReference);
+                cellMatrix[coordinates[0]][coordinates[1]].setStringValue(formula);
+            } else if (isNumeric(formula)) {
+                cellMatrix[coordinates[0]][coordinates[1]] = createCell(formula);
+                cellMatrix[coordinates[0]][coordinates[1]].setValue(cellValue);
+                cellMatrix[coordinates[0]][coordinates[1]].setCellName(cellReference);
+            }
 
-        }else if(!formula.startsWith("=")){
-            cellMatrix[coordinates[0]][coordinates[1]] = new StringCell(cellValue);
-            cellMatrix[coordinates[0]][coordinates[1]].setValue(cellValue);
-            cellMatrix[coordinates[0]][coordinates[1]].setCellName(cellReference);
-            cellMatrix[coordinates[0]][coordinates[1]].setStringValue(formula);
-        }
-        else{
-            cellMatrix[coordinates[0]][coordinates[1]] = createCell(formula);
-            cellMatrix[coordinates[0]][coordinates[1]].setValue(cellValue);
-            cellMatrix[coordinates[0]][coordinates[1]].setCellName(cellReference);
-        }
-        if (currentCell != null) {
-            Cell.setCurrentCell(currentCell);
-        }
+            if (currentCell != null) {
+                Cell.setCurrentCell(currentCell);
+            }
 
-        // Register dependencies
-        Cell cell = cellMatrix[coordinates[0]][coordinates[1]];
-        if (cell instanceof FormulaCell formulaCell) {
-            for (String dependentReference : formulaCell.getDependentReferences()) {
-                Cell dependentCell = dependencyManager.getCell(dependentReference);
-                if (dependentCell != null) {
-                    try {
-                        dependentCell.addDependent(cell);
-                    } catch (CircularDependencyException e) {
-                        // Handle circular dependency
-                        System.out.println("Circular Dependency Detected: " + e.getMessage());
+            // Register dependencies
+            Cell cell = cellMatrix[coordinates[0]][coordinates[1]];
+            if (cell instanceof FormulaCell formulaCell) {
+                for (String dependentReference : formulaCell.getDependentReferences()) {
+                    Cell dependentCell = dependencyManager.getCell(dependentReference);
+                    if (dependentCell != null && !dependentCell.addDependent(cell)) {
+                        // Circular dependency detected
+                        System.out.println("Circular Dependency Detected involving cell: " + dependentCell.getData());
                         // Take appropriate action to resolve circular dependency
                         // For example, break the loop, set a default value, etc.
                         dependentCell.setVisited(false);
                     }
                 }
             }
+        } catch (Exception e) {
+            // Handle any other exceptions here
+            System.out.println("Error: " + e.getMessage());
         }
     }
+
 
     public static void setDependencyManager(DependencyManager manager) {
         dependencyManager = manager;
     }
 
-    public String getValueByCellReference(String cellReference) {
-        int[] coordinates = convertCellReferenceToCoordinates(cellReference);
-        int row = coordinates[0];
-        int col = coordinates[1];
-
-        if (isValidCell(row, col)) {
-            Cell cell = cellMatrix[row][col];
-            if (cell != null) {
-                // Check if the cell has a numeric value
-                if (cell.getNumericValue() != null) {
-                    // If it's a numeric value, return the numeric value
-                    return String.valueOf(cell.getNumericValue());
-                } else {
-                    // If it's not a numeric value, return the original value
-                    return cell.getStringValue();
-                }
-            }
-        }
-        return "Invalid Cell Reference or Empty Cell";
-    }
     static int[] convertCellReferenceToCoordinates(String cellReference) {
         // Extract column letters (e.g., "A", "B", "C")
         String columnPart = cellReference.replaceAll("[0-9]", "");
@@ -207,6 +187,7 @@ public class SpreadSheet {
         }
     }
 
+
     private static Cell createCell(String value) {
         if (isNumeric(value)) {
             return new NumberCell(Double.parseDouble(value));
@@ -228,7 +209,7 @@ public class SpreadSheet {
         return value.startsWith("=");
     }
     public void setData(String[][] csvData) {
-        this.data = csvData;
+        data = csvData;
     }
 
     public void computeValues() {
@@ -265,39 +246,21 @@ public class SpreadSheet {
                 if (Objects.equals(cellMatrix[row][col], null)){
                     data[row][col] = "null";
                 }else {
-                    data[row][col] = cellMatrix[row][col].getStringValue() +"\t";
+                    if (cellMatrix[row][col] instanceof StringCell)
+                        {data[row][col] = cellMatrix[row][col].getStringValue();}
+                    else{
+                        data[row][col] = cellMatrix[row][col].getNumericValue()+"\t";
+                    }
                 }
             }
         }
     }
-
     public double someMethod(SpreadSheet currentSpreadSheet,Cell cell,String formula) throws Exception {
         ExpressionParser parser = new ExpressionParser(currentSpreadSheet, cell);
         cell.setFormulaString(formula);
         String formulaWithoutEquals = formula.substring(1);
         parser.setCurrentCell(cell);
-        assert cell != null;
         return parser.evaluate(currentSpreadSheet, formulaWithoutEquals,cell);
     }
 
-    public void setValueSpreadSheet(int row, int column, String value, Cell currentCell) {
-        data[row][column] = value;
-        cellMatrix[row][column] = createCell(value);
-
-        if (currentCell != null) {
-            Cell.setCurrentCell(currentCell);
-
-            // Update dependencies in the DependencyGraph
-            Set<String> dependencies = dependencyGraph.getDependencies(currentCell.getReference());
-            dependencyGraph.removeDependencies(currentCell.getReference());
-            updateDependencies(row, column, dependencies);
-        }
-    }
-
-    private void updateDependencies(int row, int col, Set<String> dependencies) {
-        String updatedCellReference = convertToCellReference(row, col);
-        for (String dependency : dependencies) {
-            dependencyGraph.addDependency(dependency, updatedCellReference);
-        }
-    }
 }

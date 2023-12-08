@@ -3,6 +3,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 import static org.example.FileManager.readCSV;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -19,10 +22,16 @@ public class Main {
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private boolean end = false;
 
-    public void run() throws Exception {
+    public void run() {
         boolean end = false;
         while (!end) {
-            menu();
+            try {
+                menu();
+            } catch (IOException e) {
+                System.out.println("Error reading input. Please try again.");
+            } catch (Exception e) {
+                System.out.println("An unexpected error occurred: " + e.getMessage());
+            }
         }
     }
 
@@ -76,23 +85,28 @@ public class Main {
     }
 
     public void createSpreadSheet() {
-        System.out.println("Provide the rows of the new SpreadSheet");
-        String numberofRows = "";
-        try {
-            numberofRows = reader.readLine();
-        } catch (Exception e) {
-            System.out.println("Error reading line");
-        }
-        System.out.println("Provide the columns of the new SpreadSheet");
-        String numberofcolumns = "";
-        try {
-            numberofcolumns = reader.readLine();
-        } catch (Exception e) {
-            System.out.println("Error reading line");
-        }
-        SpreadSheet spreadsheet = new SpreadSheet(Integer.parseInt(numberofRows), Integer.parseInt(numberofcolumns));
+        System.out.println("Provide the rows of the new SpreadSheet:");
+        int numberOfRows = readNumericInput();
+
+        System.out.println("Provide the columns of the new SpreadSheet:");
+        int numberOfColumns = readNumericInput();
+
+        SpreadSheet spreadsheet = new SpreadSheet(numberOfRows, numberOfColumns);
         manager.addSpreadSheet(spreadsheet);
         spreadsheet.printSpreadsheet();
+    }
+
+    private int readNumericInput() {
+        while (true) {
+            try {
+                String input = reader.readLine();
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid numeric value.");
+            } catch (IOException e) {
+                System.out.println("Error reading input. Please try again.");
+            }
+        }
     }
 
     public void SaveSpreadSheet() {
@@ -100,42 +114,48 @@ public class Main {
         FM.exportToCSV(retrievedSpreadsheet, "TemplateSpreadSheet");
     }
 
-    public void EditSpreadSheet() throws Exception {
+    public void EditSpreadSheet() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            SpreadSheet spreadSheet = manager.getSpreadSheet(0);
-            SpreadSheet.setDependencyManager(dependencyManager);
-            System.out.println("Enter cell reference(e.g., A1) or EXIT to close EDITOR):");
-            String command = scanner.nextLine().toUpperCase();
-            Cell currentCell;
-            if (command.equals("EXIT")) {
-                // Exit the editor
-                break;
-            } else {
-                System.out.println("Enter formula (e.g., =3*SUM(A1:B2)):");
-                String formula = scanner.nextLine();
-                spreadSheet.setCellreference(command, formula);
-                currentCell = SpreadSheet.getCellByReference(command);
-                if (formula.startsWith("=")) {
-                    ExpressionParser parser = new ExpressionParser(spreadSheet, currentCell);
-                    String formulaWithoutEquals = formula.substring(1);
-                    try {
-                        if (currentCell != null) {
-                            parser.setCurrentCell(currentCell);
-                        }
-                        assert currentCell != null;
-                        double result = parser.evaluate(spreadSheet, formulaWithoutEquals, currentCell);
-                        SpreadSheet.setValueByCellReference(command, String.valueOf(result), formula, currentCell);
-                    } catch (Exception e) {
-                        System.out.println("Error: " + e.getMessage());
-                    }
+            try {
+                SpreadSheet spreadSheet = manager.getSpreadSheet(0);
+                SpreadSheet.setDependencyManager(dependencyManager);
+                System.out.println("Enter cell reference (e.g., A1) or EXIT to close EDITOR):");
+                String command = scanner.nextLine().toUpperCase();
+                Cell currentCell;
+                if (command.equals("EXIT")) {
+                    // Exit the editor
+                    break;
                 } else {
-                    SpreadSheet.setValueByCellReference(command, formula, formula, currentCell);
+                    System.out.println("Enter formula (e.g., =3*SUM(A1:B2)):");
+                    String formula = scanner.nextLine();
+                    spreadSheet.setCellreference(command, formula);
+                    currentCell = SpreadSheet.getCellByReference(command);
+                    if (formula.startsWith("=")) {
+                        ExpressionParser parser = new ExpressionParser(spreadSheet, currentCell);
+                        String formulaWithoutEquals = formula.substring(1);
+                        try {
+                            if (currentCell != null) {
+                                parser.setCurrentCell(currentCell);
+                            }
+                            assert currentCell != null;
+                            double result = parser.evaluate(spreadSheet, formulaWithoutEquals, currentCell);
+                            SpreadSheet.setValueByCellReference(command, String.valueOf(result), formula, currentCell);
+                        } catch (Exception e) {
+                            System.out.println("Error: " + e.getMessage());
+                        }
+                    } else {
+                        SpreadSheet.setValueByCellReference(command, formula, formula, currentCell);
+                    }
                 }
+                spreadSheet.computeValues();
+                spreadSheet.setDataFromCell();
+                spreadSheet.printSpreadsheet();
+            } catch (IOException e) {
+                System.out.println("Error reading input. Please try again.");
+            } catch (Exception e) {
+                System.out.println("An unexpected error occurred: Introduce valid cell reference");
             }
-            spreadSheet.computeValues();
-            spreadSheet.setDataFromCell();
-            spreadSheet.printSpreadsheet();
         }
     }
 

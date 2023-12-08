@@ -4,23 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="08ad7fba-adb0-4ea5-b0e4-698b0adb2e08" name="Changes" comment="S'ha introduit test">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="08ad7fba-adb0-4ea5-b0e4-698b0adb2e08" name="Changes" comment="Mejoras">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extraccion" beforeDir="false" afterPath="$PROJECT_DIR$/TemplateSpreadSheet" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Cell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Cell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ExpressionElement.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ExpressionNode.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CircularDependencyException.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ExpressionParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/ExpressionParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/FileManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/FileManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/FormulaCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/FormulaCell.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/NumberCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/NumberCell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Operator.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/OperatorNode.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/SpreadSheet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/SpreadSheet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/SpreadSheet_Manager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/SpreadSheet_Manager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/StringCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/StringCell.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,7 +102,8 @@
       <workItem from="1701793612484" duration="1876000" />
       <workItem from="1701963384231" duration="2651000" />
       <workItem from="1701966267460" duration="112000" />
-      <workItem from="1701966387770" duration="7401000" />
+      <workItem from="1701966387770" duration="7457000" />
+      <workItem from="1702045308569" duration="10783000" />
     </task>
     <task id="LOCAL-00001" summary="initial">
       <option name="closed" value="true" />
@@ -210,7 +201,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701712726408</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Mejoras">
+      <option name="closed" value="true" />
+      <created>1701976292651</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1701976292651</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -240,7 +239,8 @@
     <MESSAGE value="Dependenicas basicas funcionan MEJOR ara queda que les formules funcionin be i mirar las circulars infinites" />
     <MESSAGE value="Coses molt arreglades faltan petits detalls" />
     <MESSAGE value="S'ha introduit test" />
-    <option name="LAST_COMMIT_MESSAGE" value="S'ha introduit test" />
+    <MESSAGE value="Mejoras" />
+    <option name="LAST_COMMIT_MESSAGE" value="Mejoras" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

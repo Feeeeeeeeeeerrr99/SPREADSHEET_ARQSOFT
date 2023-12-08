@@ -20,27 +20,38 @@ public class ExpressionParser {
     }
 
     public double evaluate(SpreadSheet s, String expression,Cell currentCell) throws Exception {
-        this.SpreadSheet = s;
-        String preprocessedFormula = preprocessFormula(expression);
-        String rpn = infixToRPN(preprocessedFormula,s);
-        String rpncorrect = formatExpression(rpn);
-        double result=buildSyntaxTreeAndCompute(rpncorrect);
-        // Check for circular dependencies
-        if (currentCell.isVisited()) {
-            System.out.println("Circular dependency detected involving cell: " + currentCell.getCellName());
-            // Take appropriate action to resolve circular dependency
-            // For example, break the loop, set a default value, etc.
-            currentCell.setVisited(false);  // Reset the visited flag
-            return Double.NaN;  // Return some default value
+        try {
+            this.SpreadSheet = s;
+            String preprocessedFormula = preprocessFormula(expression);
+            String rpn = infixToRPN(preprocessedFormula,s);
+            double result = buildSyntaxTreeAndCompute(rpn);
+
+            // Check for circular dependencies
+            if (currentCell.isVisited()) {
+                System.out.println("Circular dependency detected involving cell: " + currentCell.getCellName());
+                // Take appropriate action to resolve circular dependency
+                // For example, break the loop, set a default value, etc.
+                currentCell.setVisited(false);  // Reset the visited flag
+                return Double.NaN;  // Return some default value
+            }
+            // Update the current cell with the new value
+            currentCell.setVisited(true);
+            currentCell.updateValue(Double.toString(result));
+            currentCell.notifyDependents();
+            currentCell.setVisited(false); // Reset visited status
+            return result;
+        } catch (ArithmeticException e) {
+            System.out.println("Error detected: Equation divided by zero ");
+            return Double.NaN;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error detected: Invalid formula syntax");
+            return Double.NaN;
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+            return Double.NaN;  // Return some default value for other exceptions
         }
-        // Update the current cell with the new value
-        currentCell.setVisited(true);
-        currentCell.updateValue(Double.toString(result));
-        currentCell.notifyDependents();
-        currentCell.setVisited(false); // Reset visited status
-        return result;
     }
-    public String infixToRPN(String infixExpression, SpreadSheet spreadSheet) throws CircularDependencyException {
+    public String infixToRPN(String infixExpression, SpreadSheet spreadSheet) {
         StringBuilder output = new StringBuilder();
         Stack<Character> operatorStack = new Stack<>();
 
@@ -60,9 +71,12 @@ public class ExpressionParser {
                 if (org.example.SpreadSheet.isValidCellReference(cellReference)) {
                     // Replace cell reference with its actual value
                     Cell cell = org.example.SpreadSheet.getCellByReference(cellReference);
-                    assert cell != null;
-                    String cellContent = Double.toString(cell.getNumericValue());
-                    output.append(cellContent).append(" ");
+                    if (cell==null){String cellContent="0";
+                        output.append(cellContent).append(" ");}
+                    else{
+                        String cellContent = Double.toString(cell.getNumericValue());
+                        output.append(cellContent).append(" ");}
+
                 } else {
                     // Not a cell reference, append as is
                     output.append(operand).append(" ");
@@ -83,7 +97,9 @@ public class ExpressionParser {
         }
 
         // Trim any leading or trailing whitespace
-        return output.toString().trim();
+        String solution=output.toString().trim();
+        return solution.replaceAll("(?<=\\S)(?=[+\\-*/])|(?<=[+\\-*/])(?=\\S)", " ");
+
     }
 
     private void handleClosingParenthesis(Stack<Character> operatorStack, StringBuilder output) {
@@ -246,37 +262,6 @@ public class ExpressionParser {
         return result.toArray(new String[0]);
     }
 
-    private void addDependencyToCurrentCell(String variable) {
-        // Assuming you have a current cell in your context
-        // Update this part based on your actual structure
-        Cell dependentCell = SpreadSheet.getCellByReference(variable);
-        if (currentCell != null && dependentCell != null) {
-            try {
-                currentCell.addDependency(dependentCell);
-            } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
-            }
-        }
-    }
-
-    // Add a method to check if a token is a variable
-    private static boolean isVariable(String token) {
-        // Implement your logic to check if the token is a variable
-        // Example: Assume variables are alphanumeric and can contain underscores
-        return token.matches("[a-zA-Z][a-zA-Z0-9_]*");
-    }
-
-    // Add a method to get the value of a variable
-    private String getVariableValue(String variable) {
-        // Implement your logic to get the value associated with the variable
-        // Example: Assume you have a SpreadSheet class that can provide cell values
-        if (this.SpreadSheet != null) {
-            return SpreadSheet.getVariableString(variable);
-        } else {
-            throw new IllegalStateException("SpreadSheet instance not set. Initialize it before using variables.");
-        }
-    }
-
     private boolean isOperand(char c) {
         return Character.isLetterOrDigit(c) || c == '.';
     }
@@ -380,10 +365,5 @@ public class ExpressionParser {
             default:
                 throw new IllegalArgumentException("Invalid operator: " + operator);
         }
-    }
-
-    public static String formatExpression(String input) {
-        // Insert space between operators and operands
-        return input.replaceAll("(?<=\\S)(?=[+\\-*/])|(?<=[+\\-*/])(?=\\S)", " ");
     }
 }
