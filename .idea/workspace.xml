@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="08ad7fba-adb0-4ea5-b0e4-698b0adb2e08" name="Changes" comment="Mejoras 2.0">
+    <list default="true" id="08ad7fba-adb0-4ea5-b0e4-698b0adb2e08" name="Changes" comment="Antes de merge">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DependencyGraph.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,7 +102,9 @@
       <workItem from="1702045308569" duration="10846000" />
       <workItem from="1702138508561" duration="4540000" />
       <workItem from="1702306285334" duration="1710000" />
-      <workItem from="1702909637084" duration="4247000" />
+      <workItem from="1702909637084" duration="4988000" />
+      <workItem from="1702918572835" duration="213000" />
+      <workItem from="1702918864134" duration="132000" />
     </task>
     <task id="LOCAL-00001" summary="initial">
       <option name="closed" value="true" />
@@ -216,7 +218,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702063136008</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Antes de merge">
+      <option name="closed" value="true" />
+      <created>1702917761300</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1702917761300</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -275,7 +285,8 @@
     <MESSAGE value="S'ha introduit test" />
     <MESSAGE value="Mejoras" />
     <MESSAGE value="Mejoras 2.0" />
-    <option name="LAST_COMMIT_MESSAGE" value="Mejoras 2.0" />
+    <MESSAGE value="Antes de merge" />
+    <option name="LAST_COMMIT_MESSAGE" value="Antes de merge" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
