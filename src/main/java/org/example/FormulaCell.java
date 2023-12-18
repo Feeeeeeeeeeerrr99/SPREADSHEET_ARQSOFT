@@ -1,34 +1,68 @@
 package org.example;
 import java.util.HashSet;
 import java.util.Set;
-
-public class FormulaCell extends Cell{
+/**
+ * The FormulaCell class manages all considerations of functions and the format of cells with formulas.
+ */
+public class FormulaCell extends Cell {
     private String formula;
     private Double value;
     private Set<String> dependentReferences = new HashSet<>();
     private String actualCell;
 
-
+    /**
+     * Constructs a FormulaCell with the specified formula.
+     *
+     * @param formula The formula for this cell.
+     */
     public FormulaCell(String formula) {
         this.formula = formula;
     }
+
+    /**
+     * Constructs a FormulaCell with the specified formula and actual cell reference.
+     *
+     * @param formulavalue The formula for this cell.
+     * @param actualCell   The actual cell reference.
+     */
     public FormulaCell(String formulavalue, String actualCell) {
         formula = formulavalue;
         this.actualCell = actualCell;
     }
 
+    /**
+     * Gets the set of dependent references for this formula cell.
+     *
+     * @return The set of dependent references.
+     */
     public Set<String> getDependentReferences() {
         return dependentReferences;
     }
 
+    /**
+     * Sets the value of the formula cell based on the provided text.
+     *
+     * @param text The text value to set.
+     */
     public void setValue(String text) {
         this.value = Double.parseDouble(text);
     }
 
+    /**
+     * Gets the formula string of this formula cell.
+     *
+     * @return The formula string.
+     */
+    public String getFormulaString() {
+        return this.formula;
+    }
 
-
-    public String getFormulaString(){return this.formula;}
-
+    /**
+     * Evaluates the formula cell using the provided cell matrix.
+     *
+     * @param cells The cell matrix.
+     * @return The result of the evaluation.
+     */
     public double evaluate(Cell[][] cells) {
         if (formula.startsWith("=SUMA(") || formula.startsWith("=MIN(") || formula.startsWith("=MAX(") || formula.startsWith("=PROMEDIO(")) {
             int startIndex = formula.indexOf("(") + 1;
@@ -218,26 +252,64 @@ public class FormulaCell extends Cell{
         return Double.NaN;
     }
 
+    /**
+     * Checks if the cell coordinates are valid within the given cell matrix.
+     *
+     * @param row   The row index.
+     * @param col   The column index.
+     * @param cells The cell matrix.
+     * @return True if the cell coordinates are valid, false otherwise.
+     */
     private boolean isValidCell(int row, int col, Cell[][] cells) {
         return row >= 0 && row < cells.length && col >= 0 && col < cells[0].length;
     }
+
+    /**
+     * Gets the formula data of the FormulaCell.
+     *
+     * @return The formula as a string.
+     */
     @Override
     public String getData() {
         return formula;
     }
 
+    /**
+     * Updates the value of the FormulaCell based on the provided formula.
+     *
+     * @param formula The new formula to update.
+     * @throws Exception If there is an error updating the value.
+     */
     @Override
     protected void updateValue(String formula) throws Exception {
         setValue(String.valueOf(formula));
     }
+
+    /**
+     * Gets the reference of the FormulaCell.
+     * For FormulaCell, the reference is the actual formula.
+     *
+     * @return The formula as the reference.
+     */
     @Override
     public String getReference() {
-        // For FormulaCell, you can return the actual formula as the reference
         return formula;
     }
+
+    /**
+     * Gets the numeric value of the FormulaCell.
+     *
+     * @return The numeric value of the formula.
+     */
     public Double getNumericValue() {
         return value;
     }
+
+    /**
+     * Sets the numeric value of the FormulaCell.
+     *
+     * @param result The numeric value to set.
+     */
     @Override
     public void setNumericValue(Double result) {
         this.value = result;

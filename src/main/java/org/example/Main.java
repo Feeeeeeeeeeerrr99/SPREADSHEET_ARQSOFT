@@ -1,19 +1,16 @@
 package org.example;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 import static org.example.FileManager.readCSV;
 import java.io.IOException;
 
-
+/**
+ * The Main class represents the main entry point for the spreadsheet application.
+ * It provides a user interface for interacting with spreadsheets.
+ */
 public class Main {
-    public static void main(String[] args) throws Exception {
-        Main m = new Main();
-        m.run();
-    }
-
-    public Main() {
-    }
 
     private FileManager FM = new FileManager();
     SpreadSheet_Manager manager = new SpreadSheet_Manager();
@@ -21,6 +18,26 @@ public class Main {
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private boolean end = false;
 
+    /**
+     * Main method to start the program.
+     *
+     * @param args Command-line arguments (not used in this application).
+     * @throws Exception If an exception occurs during program execution.
+     */
+    public static void main(String[] args) throws Exception {
+        Main m = new Main();
+        m.run();
+    }
+
+    /**
+     * Default constructor for the Main class.
+     */
+    public Main() {
+    }
+
+    /**
+     * Runs the main program loop.
+     */
     public void run() {
         boolean end = false;
         while (!end) {
@@ -34,6 +51,11 @@ public class Main {
         }
     }
 
+    /**
+     * Displays the main menu and handles user input.
+     *
+     * @throws Exception If an exception occurs during menu execution.
+     */
     public void menu() throws Exception {
         System.out.println("SPREADSHEET UI");
         System.out.println("------------------");
@@ -77,12 +99,18 @@ public class Main {
         }
     }
 
+    /**
+     * Loads an existing spreadsheet.
+     */
     public void loadSpreadSheet() {
         SpreadSheet ls = FileManager.createSpreadsheet("TemplateSpreadSheet");
         manager.addSpreadSheet(ls);
         ls.printSpreadsheet();
     }
 
+    /**
+     * Creates a new spreadsheet based on user input.
+     */
     public void createSpreadSheet() {
         System.out.println("Provide the rows of the new SpreadSheet:");
         int numberOfRows = readNumericInput();
@@ -95,6 +123,11 @@ public class Main {
         spreadsheet.printSpreadsheet();
     }
 
+    /**
+     * Reads a numeric input from the user.
+     *
+     * @return The numeric input entered by the user.
+     */
     private int readNumericInput() {
         while (true) {
             try {
@@ -108,11 +141,17 @@ public class Main {
         }
     }
 
+    /**
+     * Saves the current spreadsheet to a CSV file.
+     */
     public void SaveSpreadSheet() {
         SpreadSheet retrievedSpreadsheet = manager.getSpreadSheet(0);
         FM.exportToCSV(retrievedSpreadsheet, "TemplateSpreadSheet");
     }
 
+    /**
+     * Edits the current spreadsheet based on user input.
+     */
     public void EditSpreadSheet() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -158,6 +197,11 @@ public class Main {
         }
     }
 
+    /**
+     * Runs a pre-established formula test.
+     *
+     * @throws Exception If an exception occurs during the test.
+     */
     public void runTest() throws Exception {
         String[][] commands = readCSV("commands.txt");
         SpreadSheet SpreadSheet = new SpreadSheet(Integer.parseInt("5"), Integer.parseInt("5"));
@@ -168,7 +212,7 @@ public class Main {
         spreadSheet.setCellreference("A2", "2");
         spreadSheet.setCellreference("B1", "3");
         spreadSheet.setCellreference("B2", "4");
-        //Anem a probar formules
+        // Anem a probar formules
         for (int i = 0; i < commands.length; i++) {
             String[] positions = {"C1", "C2", "C3", "C4", "C5", "D1", "D2", "D3", "D4", "D5"};
             spreadSheet.setCellreference(positions[i], "=" + commands[i][0]);

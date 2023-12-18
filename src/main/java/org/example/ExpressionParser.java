@@ -5,20 +5,40 @@ import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+/**
+ * Parses and evaluates the given expression for a cell in a spreadsheet.
+ */
 public class ExpressionParser {
     private SpreadSheet SpreadSheet;
     private Cell currentCell;
 
-
+    /**
+     * Sets the current cell for which the expression is being parsed.
+     *
+     * @param cell The current cell.
+     */
     public void setCurrentCell(Cell cell) {
         this.currentCell = cell;
     }
+    /**
+     * Constructor for the ExpressionParser.
+     *
+     * @param spreadSheet The spreadsheet associated with the parser.
+     * @param current     The current cell being parsed.
+     */
     public ExpressionParser(SpreadSheet spreadSheet, Cell current) {
         this.SpreadSheet = spreadSheet;
         this.currentCell=current;
     }
-
+    /**
+     * Evaluates the given expression and updates the current cell with the result.
+     *
+     * @param s           The spreadsheet.
+     * @param expression  The expression to evaluate.
+     * @param currentCell The current cell to update.
+     * @return The result of the evaluation.
+     * @throws Exception If an error occurs during evaluation.
+     */
     public double evaluate(SpreadSheet s, String expression,Cell currentCell) throws Exception {
         try {
             this.SpreadSheet = s;
@@ -51,6 +71,13 @@ public class ExpressionParser {
             return Double.NaN;  // Return some default value for other exceptions
         }
     }
+    /**
+     * Converts an infix expression to Reverse Polish Notation (RPN).
+     *
+     * @param infixExpression The infix expression to convert.
+     * @param spreadSheet    The spreadsheet associated with the expression.
+     * @return The RPN representation of the infix expression.
+     */
     public String infixToRPN(String infixExpression, SpreadSheet spreadSheet) {
         StringBuilder output = new StringBuilder();
         Stack<Character> operatorStack = new Stack<>();
@@ -101,7 +128,12 @@ public class ExpressionParser {
         return solution.replaceAll("(?<=\\S)(?=[+\\-*/])|(?<=[+\\-*/])(?=\\S)", " ");
 
     }
-
+    /**
+     * Handles the closing parenthesis during infix to RPN conversion.
+     *
+     * @param operatorStack The operator stack.
+     * @param output        The output StringBuilder for RPN.
+     */
     private void handleClosingParenthesis(Stack<Character> operatorStack, StringBuilder output) {
         while (!operatorStack.isEmpty() && operatorStack.peek() != '(') {
             output.append(operatorStack.pop()).append(" ");
@@ -110,9 +142,12 @@ public class ExpressionParser {
             operatorStack.pop(); // Pop the '('
         }
     }
-
-
-
+    /**
+     * Preprocesses the formula by identifying and replacing basic operations.
+     *
+     * @param formula The original formula.
+     * @return The processed formula with basic operations replaced by their computed results.
+     */
     public String preprocessFormula(String formula) {
         // Identify and replace basic operations in the formula
         String processedFormula = formula;
@@ -157,6 +192,12 @@ public class ExpressionParser {
 
         return processedFormula;
     }
+    /**
+     * Extracts content within the outermost parentheses of an expression.
+     *
+     * @param expression The expression containing parentheses.
+     * @return The content within the outermost parentheses.
+     */
     public static String extractContentInOutermostParentheses(String expression) {
         int nestingLevel = 0;
         StringBuilder result = new StringBuilder();
@@ -193,7 +234,12 @@ public class ExpressionParser {
 
         return result.toString();
     }
-
+    /**
+     * Handles the content within parentheses, replacing cell references with actual values.
+     *
+     * @param content The content within parentheses.
+     * @return The processed content with cell references replaced.
+     */
     private static String handleContent(String content) {
         if (containsSemicolon(content)) {
             // Split content into parts based on semicolon
@@ -218,18 +264,33 @@ public class ExpressionParser {
             return content;
         }
     }
-
+    /**
+     * Handles ranges within parentheses.
+     *
+     * @param range The range within parentheses.
+     * @return The processed range.
+     */
     private static String handleRange(String range) {
         // Implement logic to handle range, e.g., convert "A1:A3" to "A1 A2 A3"
         // For simplicity, this example just returns the original range
         return range;
     }
 
-    // Helper function to check if a string contains a semicolon
+    /**
+     * Checks if the given string contains a semicolon.
+     *
+     * @param s The input string.
+     * @return True if the string contains a semicolon, false otherwise.
+     */
     private static boolean containsSemicolon(String s) {
         return s.contains(";");
     }
-
+    /**
+     * Splits the input string outside parentheses based on semicolons.
+     *
+     * @param input The input string to split.
+     * @return An array of substrings separated by semicolons outside parentheses.
+     */
     private static String[] splitOutsideParentheses2(String input) {
         // Initialize variables
         int depth = 0;
@@ -261,11 +322,21 @@ public class ExpressionParser {
         // Convert the list to an array
         return result.toArray(new String[0]);
     }
-
+    /**
+     * Checks if a character is an operand (letter, digit, or dot).
+     *
+     * @param c The character to check.
+     * @return True if the character is an operand, false otherwise.
+     */
     private boolean isOperand(char c) {
         return Character.isLetterOrDigit(c) || c == '.';
     }
-
+    /**
+     * Checks if a string represents a numeric value.
+     *
+     * @param str The string to check.
+     * @return True if the string represents a numeric value, false otherwise.
+     */
     private static boolean isNumeric(String str) {
         try {
             Double.parseDouble(str.replace(",", ".")); // Replace comma with dot for decimal parsing
@@ -274,7 +345,12 @@ public class ExpressionParser {
             return false;
         }
     }
-
+    /**
+     * Determines the precedence of an operator.
+     *
+     * @param operator The operator character.
+     * @return The precedence level of the operator.
+     */
     private int precedence(char operator) {
         switch (operator) {
             case '+':
@@ -287,14 +363,22 @@ public class ExpressionParser {
                 return 0;
         }
     }
-
+    /**
+     * Handles the conversion of infix expression to RPN for an operator.
+     *
+     * @param operator      The operator character.
+     * @param operatorStack The operator stack.
+     * @param output        The output StringBuilder for RPN.
+     */
     private void handleOperator(char operator, Stack<Character> operatorStack, StringBuilder output) {
         while (!operatorStack.isEmpty() && precedence(operatorStack.peek()) >= precedence(operator)) {
             output.append(operatorStack.pop());
         }
         operatorStack.push(operator);
     }
-
+    /**
+     * Represents a node in the syntax tree, which can be either an operator or an operand.
+     */
     static class TreeNode {
         char operator; // Change char to Object to accommodate both operators and operands
         Double operand; // Add an operand field as Double to distinguish from operators
@@ -310,6 +394,12 @@ public class ExpressionParser {
             this.left = this.right = null;
         }
     }
+    /**
+     * Builds the syntax tree from the RPN expression and computes the result.
+     *
+     * @param rpnExpression The RPN expression.
+     * @return The result of the expression evaluation.
+     */
     public static double buildSyntaxTreeAndCompute(String rpnExpression) {
         Stack<TreeNode> stack = new Stack<>();
         String[] tokens = rpnExpression.split("\\s+");
@@ -330,7 +420,12 @@ public class ExpressionParser {
         }
         return evaluateSyntaxTree(stack.pop());
     }
-
+    /**
+     * Recursively evaluates the syntax tree to compute the result.
+     *
+     * @param root The root of the syntax tree.
+     * @return The result of the expression evaluation.
+     */
     private static double evaluateSyntaxTree(TreeNode root) {
         if (root == null) {
             throw new IllegalArgumentException("Invalid syntax tree");
@@ -345,9 +440,23 @@ public class ExpressionParser {
             throw new IllegalArgumentException("Invalid syntax tree node");
         }
     }
+    /**
+     * Checks if a character is an operator.
+     *
+     * @param c The character to check.
+     * @return True if the character is an operator, false otherwise.
+     */
     private static boolean isOperator(char c) {
         return c == '+' || c == '-' || c == '*' || c == '/';
     }
+    /**
+     * Applies the specified operator to two operands.
+     *
+     * @param operator The operator character.
+     * @param operand1 The first operand.
+     * @param operand2 The second operand.
+     * @return The result of applying the operator to the operands.
+     */
     private static double applyOperator(char operator, double operand1, double operand2) {
         switch (operator) {
             case '+':
